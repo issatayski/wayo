@@ -18,8 +18,9 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: #ffffff;
+    background: #fff;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: relative;
 }
 
 header .logo {
@@ -28,16 +29,23 @@ header .logo {
     color: #0077cc;
 }
 
-header nav ul {
+/* Navigation */
+nav ul {
     display: flex;
     list-style: none;
     gap: 1rem;
 }
 
-header nav ul li a {
+nav ul li a {
     text-decoration: none;
     color: #333;
     font-weight: 500;
+}
+
+.hamburger {
+    display: none;
+    font-size: 2rem;
+    cursor: pointer;
 }
 
 /* Hero Section */
@@ -51,10 +59,12 @@ header nav ul li a {
     max-height: 400px;
     object-fit: cover;
     display: none;
+    transition: opacity 1s ease-in-out;
 }
 
 .slider img.active {
     display: block;
+    opacity: 1;
 }
 
 .hero-text {
@@ -67,8 +77,12 @@ header nav ul li a {
 }
 
 .hero-text h1 {
-    font-size: 2rem;
+    font-size: 6vw;
     margin-bottom: 0.5rem;
+}
+
+.hero-text p {
+    font-size: 4vw;
 }
 
 /* Sections */
@@ -76,26 +90,25 @@ section {
     padding: 2rem 1rem;
     max-width: 1000px;
     margin: auto;
-    background: #ffffff;
+    background: #fff;
     margin-bottom: 1rem;
     border-radius: 8px;
 }
 
-/* Search form */
-.search form {
+/* Forms */
+form {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
-.search input, .search button,
-.payment input, .payment button {
+input, button {
     padding: 0.7rem;
     border-radius: 5px;
     border: 1px solid #ccc;
 }
 
-.search button, .payment button {
+button {
     background: #0077cc;
     color: #fff;
     border: none;
@@ -116,23 +129,18 @@ section {
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 1rem;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 .card img {
     width: 100%;
     border-radius: 5px;
-}
-
-/* Payment form */
-.payment form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-/* About section */
-.about p {
-    margin-bottom: 1rem;
 }
 
 /* Footer */
@@ -143,7 +151,85 @@ footer {
     padding: 1rem;
 }
 
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background: #fff;
+    margin: 10% auto;
+    padding: 1.5rem;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.modal-content .close {
+    float: right;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.modal-content .seats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.modal-content .seats button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #0077cc;
+    border-radius: 5px;
+    background: #fff;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.modal-content .seats button:hover {
+    background: #0077cc;
+    color: #fff;
+}
+
 /* Responsive */
+@media(max-width: 768px){
+    nav ul {
+        display: none;
+        flex-direction: column;
+        gap: 0;
+        background: #fff;
+        position: absolute;
+        top: 60px;
+        right: 0;
+        width: 200px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        border-radius: 5px;
+    }
+    nav ul.active {
+        display: flex;
+    }
+    .hamburger {
+        display: block;
+    }
+
+    .hero-text h1 {
+        font-size: 8vw;
+    }
+    .hero-text p {
+        font-size: 5vw;
+    }
+}
+
 @media(min-width: 768px){
     .flight-cards {
         flex-direction: row;
