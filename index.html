@@ -3,109 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WayO — Онлайн-билетирование</title>
-    <link rel="stylesheet" href="style.css">
+    <title>WayO — Кабинет Автовокзала (Прототип)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar-item.active { background-color: rgba(26, 86, 219, 0.1); color: #1A56DB; border-right: 4px solid #1A56DB; }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+        .custom-shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06); }
+    </style>
 </head>
-<body>
-    <header>
-        <div class="logo">WayO</div>
-        <nav>
-            <div class="hamburger" id="hamburger">&#9776;</div>
-            <ul id="nav-links">
-                <li><a href="#home">Главная</a></li>
-                <li><a href="#search">Поиск маршрутов</a></li>
-                <li><a href="#about">О проекте</a></li>
-                <li><a href="#contact">Контакты</a></li>
-            </ul>
-        </nav>
-    </header>
+<body class="bg-[#F9FAFB] text-slate-900">
 
-    <section id="home" class="hero">
-        <div class="slider">
-            <img src="https://picsum.photos/id/1059/800/400" alt="Автобус">
-            <img src="https://picsum.photos/id/1043/800/400" alt="Пассажиры">
-            <img src="https://picsum.photos/id/1062/800/400" alt="Вокзал">
-        </div>
-        <div class="hero-text">
-            <h1>WayO — Ваш билет онлайн</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis auctor, nisl at convallis.</p>
-        </div>
-    </section>
-
-    <section id="search" class="search">
-        <h2>Найдите свой маршрут</h2>
-        <form>
-            <input type="text" placeholder="Откуда">
-            <input type="text" placeholder="Куда">
-            <input type="date">
-            <button type="button" onclick="alert('Функция демо')">Найти билеты</button>
-        </form>
-    </section>
-
-    <section id="flights" class="flights">
-        <h2>Список рейсов (демо)</h2>
-        <div class="flight-cards">
-            <div class="card" onclick="openModal('Город А → Город Б')">
-                <img src="https://picsum.photos/id/1071/300/150" alt="Рейс 1">
-                <h3>Город А → Город Б</h3>
-                <p>Время: 10:00 – 14:00</p>
-                <p>Цена: 3000 ₸</p>
-                <button onclick="openModal('Город А → Город Б'); event.stopPropagation()">Выбрать место</button>
+    <div class="flex h-screen overflow-hidden">
+        <!-- SIDEBAR -->
+        <aside class="w-64 bg-white border-r flex flex-col shrink-0">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold text-[#1A56DB] tracking-tight">WayO</h1>
+                <p class="text-[10px] text-slate-400 font-semibold uppercase mt-1">Terminal System</p>
             </div>
-            <div class="card" onclick="openModal('Город В → Город Г')">
-                <img src="https://picsum.photos/id/1080/300/150" alt="Рейс 2">
-                <h3>Город В → Город Г</h3>
-                <p>Время: 12:00 – 16:30</p>
-                <p>Цена: 3500 ₸</p>
-                <button onclick="openModal('Город В → Город Г'); event.stopPropagation()">Выбрать место</button>
+            
+            <nav class="flex-1 px-4 space-y-1 mt-4">
+                <button onclick="showPage('dashboard')" class="sidebar-item active w-full flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-lg transition-all">
+                    <span>📊 Дашборд</span>
+                </button>
+                <button onclick="showPage('trips')" class="sidebar-item w-full flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-lg transition-all">
+                    <span>📍 Рейсы</span>
+                </button>
+                <button onclick="showPage('buses')" class="sidebar-item w-full flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-lg transition-all">
+                    <span>🚌 Автобусы</span>
+                </button>
+                <button onclick="showPage('sales')" class="sidebar-item w-full flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-lg transition-all">
+                    <span>🎫 Продажи</span>
+                </button>
+                <button onclick="showPage('reports')" class="sidebar-item w-full flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-lg transition-all">
+                    <span>📈 Отчеты</span>
+                </button>
+            </nav>
+
+            <div class="p-6 border-t">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold">А</div>
+                    <div class="text-xs">
+                        <p class="font-semibold text-slate-700">Автовокзал Саяхат</p>
+                        <p class="text-slate-400">Администратор</p>
+                    </div>
+                </div>
             </div>
-            <div class="card" onclick="openModal('Город Д → Город Е')">
-                <img src="https://picsum.photos/id/1084/300/150" alt="Рейс 3">
-                <h3>Город Д → Город Е</h3>
-                <p>Время: 09:30 – 13:30</p>
-                <p>Цена: 2800 ₸</p>
-                <button onclick="openModal('Город Д → Город Е'); event.stopPropagation()">Выбрать место</button>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Header -->
+            <header class="h-16 bg-white border-b flex items-center justify-between px-8 shrink-0">
+                <h2 id="page-title" class="text-lg font-semibold text-slate-800">Обзор за сегодня</h2>
+                <div class="flex items-center gap-4">
+                    <span class="text-xs font-medium px-2 py-1 bg-green-100 text-green-700 rounded-md">Система: Online</span>
+                    <button class="bg-[#1A56DB] text-white text-xs px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-all">+ Новая продажа</button>
+                </div>
+            </header>
+
+            <!-- Pages Area -->
+            <div class="flex-1 overflow-y-auto p-8">
+                
+                <!-- DASHBOARD PAGE -->
+                <section id="dashboard" class="page-content active space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 custom-shadow">
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Продано сегодня</p>
+                            <p class="text-3xl font-bold mt-2 text-[#1A56DB]">128 билетов</p>
+                            <div class="mt-4 flex items-center text-green-600 text-xs font-bold">↑ 14% с вчера</div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 custom-shadow">
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Выручка (за вычетом комиссии)</p>
+                            <p class="text-3xl font-bold mt-2">450 200 ₸</p>
+                            <div class="mt-4 text-slate-400 text-xs">Комиссия WayO: 12 400 ₸</div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 custom-shadow">
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ближайший рейс</p>
+                            <p class="text-xl font-bold mt-2 text-slate-700 underline">Астана — Павлодар</p>
+                            <div class="mt-4 text-xs font-medium text-orange-600 italic">Отправление через 25 минут</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TRIPS PAGE -->
+                <section id="trips" class="page-content space-y-6">
+                    <div class="bg-white rounded-2xl border border-slate-100 custom-shadow overflow-hidden">
+                        <div class="p-6 border-b flex justify-between items-center">
+                            <h3 class="font-bold text-slate-800">Управление рейсами</h3>
+                            <button class="text-sm bg-slate-100 px-3 py-1.5 rounded-lg hover:bg-slate-200">+ Создать расписание</button>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <p class="text-sm text-slate-500 italic">Здесь вы сможете создавать маршруты, назначать время и цену билетов.</p>
+                            <div class="border-2 border-dashed border-slate-100 rounded-xl p-8 text-center">
+                                <p class="text-slate-400 text-sm">Список рейсов пуст. Добавьте первый маршрут.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- BUSES PAGE -->
+                <section id="buses" class="page-content space-y-6">
+                    <h3 class="text-xl font-bold">Мой автопарк</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-100 custom-shadow flex justify-between items-center">
+                            <div>
+                                <p class="font-bold">KZ 777 ABC 01</p>
+                                <p class="text-sm text-slate-500">Mercedes-Benz Travego (50 мест)</p>
+                            </div>
+                            <button class="text-[#1A56DB] text-sm font-semibold">Схема мест →</button>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-100 custom-shadow border-dashed flex justify-center items-center text-slate-400">
+                            <button class="text-sm font-medium">+ Добавить автобус</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SALES PAGE -->
+                <section id="sales" class="page-content space-y-6">
+                    <div class="bg-white rounded-2xl border border-slate-100 custom-shadow">
+                        <div class="p-6 border-b">
+                            <h3 class="font-bold text-slate-800">Журнал продаж</h3>
+                        </div>
+                        <div class="p-12 text-center">
+                            <p class="text-slate-400">История транзакций и проданных билетов будет отображаться здесь в реальном времени.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- REPORTS PAGE -->
+                <section id="reports" class="page-content space-y-6">
+                    <div class="flex justify-between items-end">
+                        <h3 class="text-xl font-bold">Финансовая отчетность</h3>
+                        <button class="bg-slate-800 text-white text-xs px-4 py-2 rounded-lg">Экспорт в Excel (.xlsx)</button>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl border border-slate-100 custom-shadow text-center">
+                        <p class="text-slate-400">Графики выручки и ведомости продаж по партнерам.</p>
+                    </div>
+                </section>
+
             </div>
-        </div>
-    </section>
-
-    <section id="payment" class="payment">
-        <h2>Оплата билета (демо)</h2>
-        <form>
-            <input type="text" placeholder="Имя">
-            <input type="email" placeholder="Email">
-            <button type="button" onclick="alert('Функция демо')">Оплатить</button>
-        </form>
-    </section>
-
-    <section id="about" class="about">
-        <h2>О проекте</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed commodo, justo at ultricies elementum, felis sapien posuere orci, sit amet varius purus lorem vel erat. Mauris vehicula lorem ut nisl interdum, sed bibendum neque ultricies.</p>
-        <p>Fusce efficitur, risus sit amet feugiat tincidunt, nulla metus scelerisque ex, at condimentum nibh lacus ut metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-    </section>
-
-    <footer id="contact">
-        <p>Контакты: demo@wayo.kz | Телефон: +7 700 000 00 00</p>
-        <p>© 2026 WayO</p>
-    </footer>
-
-    <!-- Модальное окно -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h3>Выбор места для рейса:</h3>
-            <p id="modal-flight-name">Рейс</p>
-            <div class="seats">
-                <button>1A</button>
-                <button>1B</button>
-                <button>2A</button>
-                <button>2B</button>
-                <button>3A</button>
-                <button>3B</button>
-            </div>
-        </div>
+        </main>
     </div>
 
-    <script src="main.js"></script>
+    <script>
+        function showPage(pageId) {
+            // 1. Скрываем все страницы
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            // 2. Снимаем выделение со всех пунктов меню
+            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+            
+            // 3. Показываем нужную страницу
+            document.getElementById(pageId).classList.add('active');
+            
+            // 4. Выделяем активный пункт меню
+            const activeBtn = Array.from(document.querySelectorAll('.sidebar-item')).find(btn => btn.innerText.toLowerCase().includes(pageId === 'dashboard' ? 'дашборд' : pageId === 'trips' ? 'рейсы' : pageId === 'buses' ? 'автобусы' : pageId === 'sales' ? 'продажи' : 'отчеты'));
+            if(activeBtn) activeBtn.classList.add('active');
+
+            // 5. Меняем заголовок в Header
+            const titles = {
+                'dashboard': 'Обзор за сегодня',
+                'trips': 'Управление рейсами',
+                'buses': 'Управление автобусами',
+                'sales': 'Последние продажи',
+                'reports': 'Аналитика и отчеты'
+            };
+            document.getElementById('page-title').innerText = titles[pageId];
+        }
+    </script>
 </body>
 </html>
