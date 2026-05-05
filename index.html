@@ -391,6 +391,10 @@ select.filter-select {
         <svg viewBox="0 0 16 16" fill="none"><path d="M1 13V8l3-3 3 3 3-4 3 4v5H1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
         Продажи
       </div>
+      <div class="sb-item" data-screen="cashier">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 7h14" stroke="currentColor" stroke-width="1.3"/><rect x="3" y="9.5" width="3" height="1.5" rx="0.5" fill="currentColor"/><rect x="7" y="9.5" width="3" height="1.5" rx="0.5" fill="currentColor"/></svg>
+        Касса
+      </div>
       <div class="sb-item" data-screen="reports">
         <svg viewBox="0 0 16 16" fill="none"><path d="M2 12V5a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7" stroke="currentColor" stroke-width="1.3"/><path d="M1 12h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M6 8.5h4M6 10.5h2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
         Отчётность
@@ -449,6 +453,8 @@ select.filter-select {
 
       <!-- ── SALES ── -->
       <div class="screen" id="screen-sales"></div>
+      <!-- u041au0430u0441u0441u0430 -->
+      <div class="screen" id="screen-cashier"></div>
 
       <!-- ── REPORTS ── -->
       <div class="screen" id="screen-reports"></div>
@@ -476,7 +482,7 @@ select.filter-select {
 const titles = {
   dashboard: 'Дашборд', buses: 'Автобусы', trips: 'Рейсы',
   predreysovoy: 'Предрейсовый контроль',
-  sales: 'Продажи', reports: 'Отчётность', staff: 'Сотрудники', settings: 'Настройки'
+  sales: 'Продажи', cashier: 'Касса', reports: 'Отчётность', staff: 'Сотрудники', settings: 'Настройки'
 };
 
 function navigate(id) {
@@ -539,6 +545,7 @@ const topbarActions = {
       <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
       Продать кассой
     </button>`,
+  cashier: () => `<button class="btn btn-primary" onclick="cNewSale()"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg> Новая продажа</button>`,
   reports: () => `
     <button class="btn" onclick="showToast('Excel файл скачан')">
       <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v7M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
@@ -573,6 +580,7 @@ window.addEventListener('DOMContentLoaded', () => {
 <script src="screens/predreysovoy.js"></script>
 <script src="screens/sales.js"></script>
 <script src="screens/reports.js"></script>
+<script src="screens/cashier.js"></script>
 <script src="screens/staff.js"></script>
 <script src="screens/settings.js"></script>
 
