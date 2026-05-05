@@ -382,6 +382,11 @@ select.filter-select {
         Рейсы
         <span class="sb-badge red">2</span>
       </div>
+      <div class="sb-item" data-screen="predreysovoy">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" stroke="currentColor" stroke-width="1.3"/><path d="M3 14v-1a5 5 0 0 1 10 0v1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M11 7l1.5 1.5L15 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Предрейсовый
+        <span class="sb-badge red">1</span>
+      </div>
       <div class="sb-item" data-screen="sales">
         <svg viewBox="0 0 16 16" fill="none"><path d="M1 13V8l3-3 3 3 3-4 3 4v5H1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
         Продажи
@@ -439,6 +444,9 @@ select.filter-select {
       <!-- ── TRIPS ── -->
       <div class="screen" id="screen-trips"></div>
 
+      <!-- ── PREDREYSOVOY ── -->
+      <div class="screen" id="screen-predreysovoy"></div>
+
       <!-- ── SALES ── -->
       <div class="screen" id="screen-sales"></div>
 
@@ -467,6 +475,7 @@ select.filter-select {
 // ── Router ────────────────────────────────────────────────────
 const titles = {
   dashboard: 'Дашборд', buses: 'Автобусы', trips: 'Рейсы',
+  predreysovoy: 'Предрейсовый контроль',
   sales: 'Продажи', reports: 'Отчётность', staff: 'Сотрудники', settings: 'Настройки'
 };
 
@@ -516,6 +525,15 @@ const topbarActions = {
       <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
       Создать рейс
     </button>`,
+  predreysovoy: () => `
+    <button class="btn" onclick="showToast('Журнал предрейсового контроля скачан')">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v7M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Журнал
+    </button>
+    <button class="btn btn-primary" onclick="openModal('modal-putevoy')">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Новый путевой лист
+    </button>`,
   sales: () => `
     <button class="btn btn-primary" onclick="openModal('modal-offline-sale')">
       <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -552,6 +570,7 @@ window.addEventListener('DOMContentLoaded', () => {
 <script src="screens/dashboard.js"></script>
 <script src="screens/buses.js"></script>
 <script src="screens/trips.js"></script>
+<script src="screens/predreysovoy.js"></script>
 <script src="screens/sales.js"></script>
 <script src="screens/reports.js"></script>
 <script src="screens/staff.js"></script>
