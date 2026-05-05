@@ -399,6 +399,10 @@ select.filter-select {
         <svg viewBox="0 0 16 16" fill="none"><path d="M2 12V5a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7" stroke="currentColor" stroke-width="1.3"/><path d="M1 12h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M6 8.5h4M6 10.5h2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
         Отчётность
       </div>
+      <div class="sb-item" data-screen="sitcenter">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Карта рейсов
+      </div>
 
       <div class="sb-section">Аккаунт</div>
       <div class="sb-item" data-screen="staff">
@@ -458,6 +462,7 @@ select.filter-select {
 
       <!-- ── REPORTS ── -->
       <div class="screen" id="screen-reports"></div>
+      <div class="screen" id="screen-sitcenter"></div>
 
       <!-- ── STAFF ── -->
       <div class="screen" id="screen-staff"></div>
@@ -482,7 +487,7 @@ select.filter-select {
 const titles = {
   dashboard: 'Дашборд', buses: 'Автобусы', trips: 'Рейсы',
   predreysovoy: 'Предрейсовый контроль',
-  sales: 'Продажи', cashier: 'Касса', reports: 'Отчётность', staff: 'Сотрудники', settings: 'Настройки'
+  sales: 'Продажи', cashier: 'Касса', reports: 'Отчётность', sitcenter: 'Карта рейсов — Live', staff: 'Сотрудники', settings: 'Настройки'
 };
 
 function navigate(id) {
@@ -552,6 +557,7 @@ const topbarActions = {
       Excel
     </button>
     <button class="btn" onclick="showToast('PDF файл скачан')">PDF</button>`,
+  sitcenter: () => `<div style="font-size:11px;color:#22D3EE;display:flex;align-items:center;gap:5px"><div style="width:6px;height:6px;border-radius:50%;background:#22D3EE;animation:scpulse 1.5s infinite"></div>Live мониторинг активен</div>`,
 };
 
 // ── Modal helpers ──────────────────────────────────────────────
@@ -581,6 +587,7 @@ window.addEventListener('DOMContentLoaded', () => {
 <script src="screens/sales.js"></script>
 <script src="screens/reports.js"></script>
 <script src="screens/cashier.js"></script>
+<script src="screens/sitcenter.js"></script>
 <script src="screens/staff.js"></script>
 <script src="screens/settings.js"></script>
 
