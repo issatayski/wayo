@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WayO — Кабинет автовокзала</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #F8F9FA;
+  --bg-tertiary: #F1F3F5;
+  --text-primary: #0F1623;
+  --text-secondary: #6B7280;
+  --text-tertiary: #9CA3AF;
+  --border-tertiary: rgba(0,0,0,0.08);
+  --border-secondary: rgba(0,0,0,0.14);
+  --accent: #1A56DB;
+  --accent-light: #EFF4FF;
+  --accent-hover: #1648C0;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --font: -apple-system, 'Inter', 'Segoe UI', sans-serif;
+}
+
+html, body { height: 100%; overflow: hidden; }
+body { font-family: var(--font); background: var(--bg-tertiary); color: var(--text-primary); }
+
+/* ── Layout ── */
+.app { display: flex; height: 100vh; }
+
+/* ── Sidebar ── */
+.sb {
+  width: 220px;
+  background: var(--bg-primary);
+  border-right: 0.5px solid var(--border-tertiary);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  height: 100vh;
+}
+
+.sb-top {
+  padding: 18px 16px 14px;
+  border-bottom: 0.5px solid var(--border-tertiary);
+}
+.sb-logo { display: flex; align-items: center; gap: 9px; }
+.sb-logo-icon {
+  width: 30px; height: 30px;
+  border-radius: 7px;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.sb-logo-icon svg { width: 17px; height: 17px; }
+.sb-logo-name { font-size: 15px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.3px; }
+.sb-station { font-size: 11px; color: var(--text-secondary); margin-top: 4px; padding-left: 39px; }
+
+.sb-nav { padding: 8px; flex: 1; overflow-y: auto; }
+.sb-section {
+  font-size: 10px; font-weight: 600;
+  color: var(--text-tertiary);
+  padding: 14px 8px 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+.sb-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 9px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 1px;
+  user-select: none;
+  transition: background 0.1s, color 0.1s;
+  position: relative;
+}
+.sb-item:hover { background: var(--bg-secondary); color: var(--text-primary); }
+.sb-item.active {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 500;
+}
+.sb-item svg { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.65; }
+.sb-item.active svg { opacity: 1; }
+.sb-item:hover svg { opacity: 0.9; }
+.sb-badge {
+  margin-left: auto;
+  font-size: 10px; font-weight: 500;
+  padding: 1px 6px;
+  border-radius: 20px;
+}
+.sb-badge.red { background: #FEE2E2; color: #B91C1C; }
+.sb-badge.blue { background: #DBEAFE; color: #1D4ED8; }
+
+.sb-user {
+  padding: 12px 14px;
+  border-top: 0.5px solid var(--border-tertiary);
+  display: flex; align-items: center; gap: 9px;
+}
+.sb-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--accent-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.sb-uname { font-size: 12px; font-weight: 500; color: var(--text-primary); }
+.sb-urole { font-size: 11px; color: var(--text-secondary); }
+
+/* ── Main area ── */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* ── Top bar ── */
+.topbar {
+  height: 52px;
+  padding: 0 22px;
+  background: var(--bg-primary);
+  border-bottom: 0.5px solid var(--border-tertiary);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.tb-left { display: flex; align-items: center; gap: 8px; }
+.tb-title { font-size: 15px; font-weight: 500; color: var(--text-primary); }
+.tb-sep { width: 1px; height: 14px; background: var(--border-tertiary); }
+.tb-live-dot { width: 7px; height: 7px; border-radius: 50%; background: #22C55E; }
+.tb-live { font-size: 11px; color: #16A34A; font-weight: 500; }
+.tb-right { display: flex; align-items: center; gap: 7px; }
+
+/* ── Buttons ── */
+.btn {
+  font-size: 12px;
+  padding: 6px 13px;
+  border-radius: var(--radius-md);
+  border: 0.5px solid var(--border-secondary);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 5px;
+  transition: background 0.1s;
+  font-family: var(--font);
+}
+.btn:hover { background: var(--bg-secondary); }
+.btn svg { width: 13px; height: 13px; opacity: 0.6; }
+.btn-primary {
+  background: var(--accent); color: #fff;
+  border-color: var(--accent);
+}
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-primary svg { opacity: 1; }
+.btn-danger { color: #B91C1C; border-color: #FECACA; }
+.btn-danger:hover { background: #FEF2F2; }
+
+/* ── Page content ── */
+.page-wrap { flex: 1; overflow-y: auto; padding: 18px 22px; }
+
+/* ── Screen switching ── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── Shared card ── */
+.card {
+  background: var(--bg-primary);
+  border: 0.5px solid var(--border-tertiary);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+}
+.card-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.card-title { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.card-link { font-size: 11px; color: var(--accent); cursor: pointer; }
+
+/* ── Badges ── */
+.badge {
+  font-size: 10px; font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 20px;
+  display: inline-block;
+}
+.b-green { background: #DCFCE7; color: #166534; }
+.b-yellow { background: #FEF9C3; color: #854D0E; }
+.b-red { background: #FEE2E2; color: #991B1B; }
+.b-blue { background: #DBEAFE; color: #1E40AF; }
+.b-gray { background: #F3F4F6; color: #374151; }
+.b-purple { background: #EDE9FE; color: #5B21B6; }
+
+/* ── Metric cards ── */
+.metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 14px; }
+.mc {
+  background: var(--bg-primary);
+  border: 0.5px solid var(--border-tertiary);
+  border-radius: var(--radius-md);
+  padding: 13px 15px;
+  position: relative; overflow: hidden;
+}
+.mc-accent {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+.mc-label { font-size: 11px; color: var(--text-secondary); margin-bottom: 6px; }
+.mc-val { font-size: 22px; font-weight: 500; color: var(--text-primary); letter-spacing: -0.5px; }
+.mc-footer { display: flex; align-items: center; gap: 5px; margin-top: 5px; }
+.mc-delta { font-size: 11px; }
+.up { color: #16A34A; }
+.down { color: #DC2626; }
+.neutral { color: var(--text-secondary); }
+
+/* ── Tables ── */
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 11px; font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border-bottom: 0.5px solid var(--border-tertiary);
+}
+tbody td {
+  padding: 10px 12px;
+  border-bottom: 0.5px solid var(--border-tertiary);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--bg-secondary); }
+.td-name { font-weight: 500; }
+.td-sub { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+
+/* ── Search / filters bar ── */
+.filters {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 14px;
+}
+.search-wrap { position: relative; flex: 1; max-width: 280px; }
+.search-wrap svg {
+  position: absolute; left: 9px; top: 50%; transform: translateY(-50%);
+  width: 13px; height: 13px; color: var(--text-tertiary);
+}
+.search-input {
+  width: 100%; padding: 6px 10px 6px 30px;
+  border: 0.5px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  font-size: 12px; font-family: var(--font);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  outline: none;
+}
+.search-input:focus { border-color: var(--accent); background: var(--bg-primary); }
+select.filter-select {
+  padding: 6px 10px;
+  border: 0.5px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  font-size: 12px; font-family: var(--font);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  outline: none; cursor: pointer;
+}
+
+/* ── Fill bar ── */
+.fill-wrap { display: flex; align-items: center; gap: 6px; }
+.fill-track { width: 56px; height: 4px; background: var(--bg-tertiary); border-radius: 2px; overflow: hidden; }
+.fill-bar { height: 4px; border-radius: 2px; }
+.fill-txt { font-size: 11px; color: var(--text-secondary); }
+
+/* ── Modal backdrop ── */
+.modal-backdrop {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 100;
+  align-items: center; justify-content: center;
+}
+.modal-backdrop.open { display: flex; }
+.modal {
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  border: 0.5px solid var(--border-tertiary);
+  width: 460px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 22px 24px;
+}
+.modal-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px;
+}
+.modal-title { font-size: 15px; font-weight: 500; }
+.modal-close {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  border: none; background: var(--bg-secondary);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--text-secondary);
+}
+.modal-close:hover { background: var(--bg-tertiary); }
+
+/* ── Form elements ── */
+.form-group { margin-bottom: 14px; }
+.form-label { font-size: 12px; font-weight: 500; color: var(--text-primary); margin-bottom: 5px; display: block; }
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 7px 10px;
+  border: 0.5px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  font-size: 12px; font-family: var(--font);
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(26,86,219,0.08);
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-hint { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; }
+
+/* ── Toast ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--text-primary);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  display: flex; align-items: center; gap: 8px;
+  z-index: 200;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast-icon { width: 18px; height: 18px; border-radius: 50%; background: #22C55E; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-secondary); border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sb">
+    <div class="sb-top">
+      <div class="sb-logo">
+        <div class="sb-logo-icon">
+          <svg viewBox="0 0 16 16" fill="none">
+            <path d="M2 11V7l6-5 6 5v4" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="5" y="9" width="6" height="6" rx="1" stroke="#fff" stroke-width="1.4"/>
+          </svg>
+        </div>
+        <div class="sb-logo-name">WayO</div>
+      </div>
+      <div class="sb-station">Автовокзал Астана</div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="sb-section">Обзор</div>
+      <div class="sb-item active" data-screen="dashboard">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.2" fill="currentColor"/><rect x="9" y="1" width="6" height="6" rx="1.2" fill="currentColor"/><rect x="1" y="9" width="6" height="6" rx="1.2" fill="currentColor"/><rect x="9" y="9" width="6" height="6" rx="1.2" fill="currentColor"/></svg>
+        Дашборд
+      </div>
+
+      <div class="sb-section">Управление</div>
+      <div class="sb-item" data-screen="buses">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="4" width="14" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.3"/><path d="M4 8.5h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="4" cy="13" r="1" fill="currentColor"/><circle cx="12" cy="13" r="1" fill="currentColor"/></svg>
+        Автобусы
+        <span class="sb-badge blue">3</span>
+      </div>
+      <div class="sb-item" data-screen="trips">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 6.5h14" stroke="currentColor" stroke-width="1.3"/><circle cx="4" cy="10" r="1" fill="currentColor"/><circle cx="8" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="10" r="1" fill="currentColor"/></svg>
+        Рейсы
+        <span class="sb-badge red">2</span>
+      </div>
+      <div class="sb-item" data-screen="sales">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M1 13V8l3-3 3 3 3-4 3 4v5H1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        Продажи
+      </div>
+      <div class="sb-item" data-screen="reports">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 12V5a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7" stroke="currentColor" stroke-width="1.3"/><path d="M1 12h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M6 8.5h4M6 10.5h2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Отчётность
+      </div>
+
+      <div class="sb-section">Аккаунт</div>
+      <div class="sb-item" data-screen="staff">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 14c0-2.761 2.239-5 5-5s5 2.239 5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M11 7l1.5 1.5L15 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Сотрудники
+      </div>
+      <div class="sb-item" data-screen="settings">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M8 2v1.5M8 12.5V14M2 8h1.5M12.5 8H14M3.515 3.515l1.06 1.06M11.425 11.425l1.06 1.06M12.485 3.515l-1.06 1.06M4.575 11.425l-1.06 1.06" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Настройки
+      </div>
+    </nav>
+
+    <div class="sb-user">
+      <div class="sb-avatar">АА</div>
+      <div>
+        <div class="sb-uname">Айдос Асанов</div>
+        <div class="sb-urole">Администратор</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <div class="main">
+
+    <!-- Top bar (динамический заголовок) -->
+    <div class="topbar">
+      <div class="tb-left">
+        <span class="tb-title" id="page-title">Дашборд</span>
+        <div class="tb-sep"></div>
+        <div class="tb-live-dot"></div>
+        <span class="tb-live">Онлайн</span>
+      </div>
+      <div class="tb-right" id="topbar-actions">
+        <!-- заполняется JS при переключении экрана -->
+      </div>
+    </div>
+
+    <!-- Контент экранов -->
+    <div class="page-wrap">
+
+      <!-- ── DASHBOARD ── -->
+      <div class="screen active" id="screen-dashboard"></div>
+
+      <!-- ── BUSES ── -->
+      <div class="screen" id="screen-buses"></div>
+
+      <!-- ── TRIPS ── -->
+      <div class="screen" id="screen-trips"></div>
+
+      <!-- ── SALES ── -->
+      <div class="screen" id="screen-sales"></div>
+
+      <!-- ── REPORTS ── -->
+      <div class="screen" id="screen-reports"></div>
+
+      <!-- ── STAFF ── -->
+      <div class="screen" id="screen-staff"></div>
+
+      <!-- ── SETTINGS ── -->
+      <div class="screen" id="screen-settings"></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <div class="toast-icon">
+    <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <span id="toast-msg">Готово</span>
+</div>
+
+<script>
+// ── Router ────────────────────────────────────────────────────
+const titles = {
+  dashboard: 'Дашборд', buses: 'Автобусы', trips: 'Рейсы',
+  sales: 'Продажи', reports: 'Отчётность', staff: 'Сотрудники', settings: 'Настройки'
+};
+
+function navigate(id) {
+  document.querySelectorAll('.sb-item').forEach(el => el.classList.toggle('active', el.dataset.screen === id));
+  document.querySelectorAll('.screen').forEach(el => el.classList.toggle('active', el.id === 'screen-' + id));
+  document.getElementById('page-title').textContent = titles[id] || id;
+  const actions = document.getElementById('topbar-actions');
+  actions.innerHTML = topbarActions[id] ? topbarActions[id]() : '';
+  if (window['render_' + id]) window['render_' + id]();
+}
+
+document.querySelectorAll('.sb-item[data-screen]').forEach(el => {
+  el.addEventListener('click', () => navigate(el.dataset.screen));
+});
+
+// ── Toast ──────────────────────────────────────────────────────
+function showToast(msg, duration = 2500) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ── Topbar actions per screen ──────────────────────────────────
+const topbarActions = {
+  dashboard: () => `
+    <button class="btn" onclick="showToast('Отчёт экспортирован')">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v7M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Экспорт
+    </button>
+    <button class="btn btn-primary" onclick="navigate('trips')">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Создать рейс
+    </button>`,
+  buses: () => `
+    <button class="btn btn-primary" onclick="openModal('modal-add-bus')">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Добавить автобус
+    </button>`,
+  trips: () => `
+    <button class="btn" onclick="showToast('Экспорт рейсов выполнен')">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v7M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Экспорт
+    </button>
+    <button class="btn btn-primary" onclick="openModal('modal-add-trip')">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Создать рейс
+    </button>`,
+  sales: () => `
+    <button class="btn btn-primary" onclick="openModal('modal-offline-sale')">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Продать кассой
+    </button>`,
+  reports: () => `
+    <button class="btn" onclick="showToast('Excel файл скачан')">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v7M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Excel
+    </button>
+    <button class="btn" onclick="showToast('PDF файл скачан')">PDF</button>`,
+};
+
+// ── Modal helpers ──────────────────────────────────────────────
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('modal-backdrop')) {
+    e.target.classList.remove('open');
+  }
+});
+
+// ── Init ──────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  navigate('dashboard');
+});
+</script>
+
+<!-- Screens loaded from separate files via script tags -->
+<script src="screens/dashboard.js"></script>
+<script src="screens/buses.js"></script>
+<script src="screens/trips.js"></script>
+<script src="screens/sales.js"></script>
+<script src="screens/reports.js"></script>
+<script src="screens/staff.js"></script>
+<script src="screens/settings.js"></script>
+
+</body>
+</html>
