@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>WayO — Автобусные билеты по Казахстану</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--acc:#1A56DB;--acc-h:#1648C0;--acc-l:#EFF6FF;--acc-m:#BFDBFE;--grn:#16A34A;--grn-l:#DCFCE7;--red:#DC2626;--red-l:#FEE2E2;--amb:#D97706;--amb-l:#FEF3C7;--dk:#0F172A;--gy:#64748B;--gy2:#94A3B8;--gy3:#CBD5E1;--bg:#F8FAFC;--bg2:#F1F5F9;--wh:#FFFFFF;--bdr:#E2E8F0;--r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:24px;--sh:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.05);--sh-lg:0 4px 24px rgba(0,0,0,.12);--fh:'Unbounded',sans-serif;--f:'Golos Text',sans-serif;--tr:.18s cubic-bezier(.4,0,.2,1)}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--f);background:var(--bg);color:var(--dk);min-height:100vh;overflow-x:hidden}
+button{cursor:pointer;font-family:var(--f);border:none;background:none}
+input,select{font-family:var(--f)}
+a{color:inherit;text-decoration:none}
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+/* Header */
+.hdr{background:var(--wh);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(0,0,0,.06)}
+.hdr-i{max-width:1100px;margin:0 auto;padding:0 16px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:8px;cursor:pointer}
+.logo-ic{width:32px;height:32px;background:var(--acc);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-tx{font-family:var(--fh);font-size:18px;font-weight:700;color:var(--dk)}
+.logo-tx span{color:var(--acc)}
+.hdr-nav{display:flex;align-items:center;gap:6px}
+.hdr-user{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:var(--r-md);background:var(--bg);border:1px solid var(--bdr);cursor:pointer;transition:var(--tr)}
+.hdr-user:hover{background:var(--acc-l);border-color:var(--acc-m)}
+.av{width:28px;height:28px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
+.hdr-un{font-size:13px;font-weight:500;color:var(--dk)}
+.hbtn{font-size:13px;font-weight:500;padding:7px 14px;border-radius:var(--r-md);transition:var(--tr)}
+.hbtn-g{color:var(--gy)}.hbtn-g:hover{color:var(--dk);background:var(--bg2)}
+.hbtn-p{background:var(--acc);color:#fff}.hbtn-p:hover{background:var(--acc-h)}
+/* Footer */
+.ftr{background:var(--dk);color:var(--gy3);padding:22px 16px;margin-top:auto}
+.ftr-i{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.ftr-logo{font-family:var(--fh);font-size:16px;font-weight:700;color:#fff}
+.ftr-logo span{color:var(--acc)}
+.ftr-links{display:flex;gap:14px;font-size:12px}
+.ftr-links a{color:var(--gy2);transition:var(--tr)}.ftr-links a:hover{color:#fff}
+/* Container */
+.c{max-width:1100px;margin:0 auto;padding:0 16px;width:100%}
+.pb{flex:1;padding:26px 0 48px}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 20px;border-radius:var(--r-md);font-size:14px;font-weight:600;transition:var(--tr);border:none;cursor:pointer;font-family:var(--f)}
+.btn-p{background:var(--acc);color:#fff}.btn-p:hover{background:var(--acc-h);transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,86,219,.3)}.btn-p:active{transform:none}.btn-p:disabled{background:var(--gy3);cursor:not-allowed;transform:none;box-shadow:none}
+.btn-s{background:var(--wh);color:var(--dk);border:1.5px solid var(--bdr)}.btn-s:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-l)}
+.btn-g{background:transparent;color:var(--gy);padding:8px 12px}.btn-g:hover{color:var(--dk);background:var(--bg2)}
+.btn-d{background:var(--red-l);color:var(--red);border:1px solid #FECACA}.btn-d:hover{background:var(--red);color:#fff}
+.btn-lg{padding:14px 28px;font-size:16px;border-radius:var(--r-lg)}.btn-bl{width:100%}
+/* Badges */
+.bdg{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.b-bl{background:var(--acc-l);color:var(--acc)}.b-gn{background:var(--grn-l);color:var(--grn)}.b-rd{background:var(--red-l);color:var(--red)}.b-am{background:var(--amb-l);color:var(--amb)}.b-gr{background:var(--bg2);color:var(--gy)}
+/* Inputs */
+.ig{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.il{font-size:13px;font-weight:500;color:var(--dk)}.il span{color:var(--red);margin-left:2px}
+.inp{width:100%;padding:10px 14px;border:1.5px solid var(--bdr);border-radius:var(--r-md);font-size:14px;color:var(--dk);background:var(--wh);transition:var(--tr);outline:none}
+.inp:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(26,86,219,.1)}.inp.err{border-color:var(--red)}
+.ihint{font-size:11px;color:var(--gy2)}.ierr{font-size:11px;color:var(--red);display:none}.ierr.show{display:block}
+/* Toast */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dk);color:#fff;padding:11px 18px;border-radius:var(--r-lg);font-size:14px;font-weight:500;z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;pointer-events:none;display:flex;align-items:center;gap:8px;box-shadow:var(--sh-lg);white-space:nowrap;max-width:90vw}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.tic{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700}
+#toast.ts .tic{background:var(--grn)}#toast.te .tic{background:var(--red)}#toast.tw .tic{background:var(--amb)}
+/* Modal */
+.mb{position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
+.mb.open{display:flex}
+.modal{background:var(--wh);border-radius:var(--r-xl);max-width:460px;width:100%;box-shadow:var(--sh-lg)}
+.mhd{padding:20px 24px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.mti{font-family:var(--fh);font-size:16px;font-weight:600;color:var(--dk)}
+.mbod{padding:14px 24px 18px;font-size:14px;color:var(--gy);line-height:1.6}
+.mcl{width:30px;height:30px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--gy);background:var(--bg2);border:none;cursor:pointer;flex-shrink:0}
+.mft{padding:0 24px 18px;display:flex;gap:8px;justify-content:flex-end}
+/* Animations */
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes ck{from{stroke-dashoffset:50}to{stroke-dashoffset:0}}
+/* Pay loader */
+.pl{position:fixed;inset:0;background:rgba(255,255,255,.95);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.pl.show{display:flex}
+.pls{width:46px;height:46px;border:3px solid var(--acc-m);border-top-color:var(--acc);border-radius:50%;animation:spin 1s linear infinite}
+/* HOME */
+.hero{background:linear-gradient(135deg,#0F172A 0%,#1E3A8A 55%,#1A56DB 100%);color:#fff;padding:44px 16px 54px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;opacity:.03;background-image:radial-gradient(circle,#fff 1px,transparent 1px);background-size:30px 30px}
+.hero-i{max-width:1100px;margin:0 auto;position:relative}
+.h-gr{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:8px}
+.h-t{font-family:var(--fh);font-size:clamp(20px,4vw,36px);font-weight:700;line-height:1.2;margin-bottom:8px;letter-spacing:-0.8px}
+.h-t span{color:#60A5FA}
+.h-s{font-size:14px;color:rgba(255,255,255,.6);margin-bottom:26px}
+.sc{background:var(--wh);border-radius:var(--r-xl);padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.28)}
+.sr{display:grid;grid-template-columns:1fr 42px 1fr;gap:7px;align-items:flex-end;margin-bottom:10px}
+.sf label{font-size:11px;font-weight:700;color:var(--gy);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px}
+.siw{position:relative}
+.s-ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--gy2);pointer-events:none}
+.si{width:100%;padding:10px 10px 10px 34px;border:1.5px solid var(--bdr);border-radius:var(--r-md);font-size:14px;font-weight:500;color:var(--dk);outline:none;transition:var(--tr)}
+.si:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(26,86,219,.1)}
+.ss{width:42px;height:42px;border-radius:50%;background:var(--acc-l);border:1.5px solid var(--acc-m);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--tr);flex-shrink:0;align-self:flex-end}
+.ss:hover{background:var(--acc);border-color:var(--acc)}.ss:hover svg{stroke:#fff}
+.sdr{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px}
+.ac{position:absolute;top:calc(100% + 3px);left:0;right:0;background:var(--wh);border:1.5px solid var(--acc-m);border-radius:var(--r-md);box-shadow:var(--sh-lg);z-index:50;display:none;overflow:hidden}
+.ac.open{display:block}
+.aci{padding:9px 13px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background .1s}
+.aci:hover{background:var(--acc-l);color:var(--acc)}
+.pop-s{margin-top:20px}
+.pop-l{font-size:11px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.7px;margin-bottom:9px}
+.pop-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:7px}
+.pop-c{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-md);padding:10px 12px;cursor:pointer;transition:var(--tr)}
+.pop-c:hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.2);transform:translateY(-2px)}
+.pop-r{font-size:13px;font-weight:600;color:#fff;margin-bottom:3px}
+.pop-p{font-size:11px;color:rgba(255,255,255,.45)}
+.up-s{background:var(--wh);border-top:1px solid var(--bdr);padding:26px 16px}
+.up-i{max-width:1100px;margin:0 auto}
+.sec-t{font-family:var(--fh);font-size:15px;font-weight:600;color:var(--dk);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.up-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.up-c{background:var(--wh);border:1.5px solid var(--acc-m);border-radius:var(--r-lg);padding:14px;cursor:pointer;transition:var(--tr)}
+.up-c:hover{border-color:var(--acc);box-shadow:var(--sh)}
+.up-r{font-family:var(--fh);font-size:13px;font-weight:600;color:var(--dk);margin-bottom:4px}
+.up-m{font-size:12px;color:var(--gy);margin-bottom:8px}
+.up-seat{display:inline-flex;align-items:center;gap:4px;background:var(--acc-l);color:var(--acc);padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.how-s{padding:34px 16px;background:var(--bg)}
+.how-i{max-width:1100px;margin:0 auto}
+.how-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:18px}
+.how-step{background:var(--wh);border:1px solid var(--bdr);border-radius:var(--r-lg);padding:18px;text-align:center}
+.how-n{width:36px;height:36px;border-radius:50%;background:var(--acc);color:#fff;font-family:var(--fh);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.how-t{font-weight:600;font-size:13px;color:var(--dk);margin-bottom:5px}
+.how-d{font-size:12px;color:var(--gy);line-height:1.5}
+/* RESULTS */
+.rw{display:grid;grid-template-columns:242px 1fr;gap:16px;align-items:start}
+.fp{background:var(--wh);border:1px solid var(--bdr);border-radius:var(--r-lg);padding:16px;position:sticky;top:76px}
+.fgl{font-size:11px;font-weight:700;color:var(--gy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.fck{display:flex;align-items:center;gap:7px;padding:4px 0;cursor:pointer;font-size:13px;color:var(--dk)}
+.fck input{accent-color:var(--acc);width:14px;height:14px}
+.ri{width:100%;accent-color:var(--acc)}
+.rhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:7px}
+.rc{font-size:13px;color:var(--gy)}.rc strong{color:var(--dk)}
+.srw{display:flex;gap:5px}
+.sb{font-size:12px;padding:5px 10px;border-radius:var(--r-sm);border:1px solid var(--bdr);background:var(--wh);color:var(--gy);transition:var(--tr);cursor:pointer;font-family:var(--f)}
+.sb.act{background:var(--acc);color:#fff;border-color:var(--acc)}
+.sb:hover:not(.act){border-color:var(--acc);color:var(--acc)}
+.tc{background:var(--wh);border:1px solid var(--bdr);border-radius:var(--r-lg);padding:16px;margin-bottom:9px;transition:var(--tr);cursor:pointer}
+.tc:hover{border-color:var(--acc-m);box-shadow:var(--sh)}.tc.dis{opacity:.55;cursor:default}.tc.dis:hover{border-color:var(--bdr);box-shadow:none}
+.tc-mn{display:grid;grid-template-columns:1fr auto 1fr auto;gap:12px;align-items:center;margin-bottom:10px}
+.tc-ti{font-family:var(--fh);font-size:21px;font-weight:600;color:var(--dk);letter-spacing:-.5px}
+.tc-st{font-size:11px;color:var(--gy);margin-top:2px}
+.tc-md{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}
+.tc-dur{font-size:11px;color:var(--gy2);font-weight:500}
+.tc-ln{display:flex;align-items:center;gap:3px}
+.tc-dot{width:5px;height:5px;border-radius:50%;background:var(--acc-m)}.tc-dash{width:36px;height:1px;background:var(--acc-m)}
+.tc-mt{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.tc-tp{font-size:11px;color:var(--gy);background:var(--bg2);padding:2px 7px;border-radius:4px}
+.tc-ac{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.tc-pr{font-family:var(--fh);font-size:19px;font-weight:700;color:var(--dk)}
+.tc-sub{font-size:11px;color:var(--gy2);text-align:right}
+/* Breadcrumb */
+.bc{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--gy);margin-bottom:16px;flex-wrap:wrap}
+.bc a{color:var(--acc);cursor:pointer}
+.bc svg{width:12px;height:12px;color:var(--gy3)}
+/* Empty */
+.empty{text-align:center;padding:50px 20px}
+.e-ic{width:68px;height:68px;margin:0 auto 12px;background:var(--bg2);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.e-t{font-family:var(--fh);font-size:17px;font-weight:600;color:var(--dk);margin-bottom:7px}
+.e-s{font-size:13px;color:var(--gy);margin-bottom:16px}
+/* SEATS */
+.sl{display:grid;grid-template-columns:1fr 310px;gap:16px;align-items:start}
+.pnl{background:var(--wh);border:1px solid var(--bdr);border-radius:var(--r-lg);padding:16px}
+.pnl-t{font-family:var(--fh);font-size:14px;font-weight:600;color:var(--dk);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.sleg{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+.sli{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--gy)}
+.slb{width:12px;height:12px;border-radius:3px}
+.bwrap{background:var(--bg);border-radius:var(--r-md);padding:12px;overflow-x:auto}
+.bfr{background:#1E293B;border-radius:8px 8px 0 0;padding:7px;text-align:center;font-size:10px;color:var(--gy3);margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:5px}
+.bgrid{display:flex;flex-direction:column;gap:3px}
+.brow{display:flex;align-items:center;gap:3px}
+.brn{width:15px;font-size:9px;color:var(--gy2);text-align:center;flex-shrink:0}
+.seat{width:30px;height:30px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;cursor:pointer;border:1.5px solid transparent;transition:var(--tr);flex-shrink:0;user-select:none}
+.sf{background:var(--acc-l);color:var(--acc);border-color:var(--acc-m)}.sf:hover{background:var(--acc);color:#fff;transform:scale(1.1)}
+.sw{background:#F0FDF4;color:#166534;border-color:#BBF7D0}.sw:hover{background:#16A34A;color:#fff;transform:scale(1.1)}
+.st{background:var(--bg2);color:var(--gy3);border-color:var(--bdr);cursor:not-allowed}
+.ssel{background:var(--acc)!important;color:#fff!important;border-color:var(--acc)!important;transform:scale(1.1);box-shadow:0 0 0 3px rgba(26,86,219,.2)}
+.aisle{width:13px;flex-shrink:0}
+.tbar{background:var(--acc-l);border:1px solid var(--acc-m);border-radius:var(--r-md);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.tbar.warn{background:var(--amb-l);border-color:#FDE68A}.tbar.warn .tv{color:var(--amb)}
+.tlbl{font-size:12px;color:var(--gy);display:flex;align-items:center;gap:5px}
+.tv{font-family:var(--fh);font-size:14px;font-weight:700;color:var(--acc)}
+.sumc{background:var(--wh);border:1px solid var(--bdr);border-radius:var(--r-lg);padding:16px;position:sticky;top:76px}
+.st-rip{background:var(--bg);border-radius:var(--r-md);padding:12px;margin-bottom:12px}
+.s-ro{font-family:var(--fh);font-size:13px;font-weight:600;color:var(--dk);margin-bottom:3px}
+.s-me{font-size:12px;color:var(--gy)}
+.s-se{display:inline-flex;align-items:center;gap:4px;background:var(--acc-l);color:var(--acc);padding:2px 8px;border-radius:20px;font-size:12px;font-weight:600;margin-top:6px}
+.pbr{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:13px}
+.pbr .l{color:var(--gy)}.pbr .v{font-weight:500}
+.pbdv{height:1px;background:var(--bdr);margin:7px 0}
+.pbt{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700}
+.pbt .v{font-family:var(--fh);color:var(--acc);font-size:17px}
+.ppre{background:var(--acc-l);border:1px solid var(--acc-m);border-radius:var(--r-md);padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--acc);display:flex;align-items:flex-start;gap:6px}
+.pcon{background:var(--grn-l);border:1px solid #BBF7D0;border-radius:var(--r-md);padding:8px 12px;font-size:12px;color:#166534;display:flex;align-items:flex-start;gap:6px;margin-bottom:10px}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+/* PAYMENT */
+.payl{display:grid;grid-template-columns:1fr 310px;gap:16px;align-items:start}
+.payc{background:var(--wh);border:1px solid var(--bdr);border-radius:var(--r-lg);padding:20px}
+.pms{display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
+.pm{border:2px solid var(--bdr);border-radius:var(--r-lg);padding:13px;cursor:pointer;transition:var(--tr)}
+.pm.sel{border-color:var(--acc);background:var(--acc-l)}
+.pmhd{display:flex;align-items:center;gap:10px}
+.pmr{width:19px;height:19px;border-radius:50%;border:2px solid var(--gy3);display:flex;align-items:center;justify-content:center;transition:var(--tr);flex-shrink:0}
+.pm.sel .pmr{border-color:var(--acc)}
+.pmd{width:9px;height:9px;border-radius:50%;background:var(--acc);display:none}.pm.sel .pmd{display:block}
+.pm-na{font-weight:600;font-size:14px;color:var(--dk)}.pm-de{font-size:12px;color:var(--gy);margin-top:1px}
+.pm-lo{display:flex;gap:5px;margin-left:auto}
+.pmlo{height:19px;border-radius:3px;border:1px solid var(--bdr);padding:1px 5px;background:var(--wh);font-size:10px;font-weight:700;display:flex;align-items:center}
+.pmbo{margin-top:11px;display:none}.pm.sel .pmbo{display:block}
+.ci{display:flex;flex-direction:column;gap:8px}
+.cr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kqw{text-align:center;padding:16px 0}
+.qbox{width:148px;height:148px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:var(--bg);border:1px solid var(--bdr);border-radius:var(--r-md)}
+.ksp{display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;color:var(--gy);margin:9px 0}
+.ks{width:13px;height:13px;border:2px solid var(--acc-m);border-top-color:var(--acc);border-radius:50%;animation:spin 1s linear infinite}
+.kinstr{font-size:12px;color:var(--gy);line-height:1.7}
+/* SUCCESS */
+.sw-{max-width:490px;margin:0 auto;text-align:center;padding:34px 16px}
+.si-c{width:66px;height:66px;background:var(--grn-l);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
+.s-ti{font-family:var(--fh);font-size:21px;font-weight:700;color:var(--dk);margin-bottom:7px}
+.s-su{font-size:14px;color:var(--gy);margin-bottom:22px;line-height:1.5}
+.tcard{background:var(--wh);border:1.5px solid var(--bdr);border-radius:var(--r-xl);overflow:hidden;margin-bottom:18px;text-align:left}
+.thd{background:linear-gradient(135deg,var(--dk) 0%,var(--acc) 100%);padding:16px;color:#fff}
+.thd-r{font-family:var(--fh);font-size:15px;font-weight:700;margin-bottom:3px}
+.thd-m{font-size:12px;color:rgba(255,255,255,.7)}
+.tbody{padding:16px}
+.tqw{display:flex;gap:14px;align-items:flex-start}
+.tqr{width:114px;height:114px;background:var(--bg);border-radius:var(--r-md);flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid var(--bdr)}
+.tdr{margin-bottom:9px}
+.tdl{font-size:10px;color:var(--gy);text-transform:uppercase;letter-spacing:.4px;font-weight:600}
+.tdv{font-size:13px;font-weight:600;color:var(--dk)}
+.tnum{font-family:monospace;font-size:11px;color:var(--gy);border-top:1px dashed var(--bdr);padding-top:9px;margin-top:3px;display:flex;justify-content:space-between}
+.en{background:var(--grn-l);border:1px solid #BBF7D0;border-radius:var(--r-md);padding:10px 13px;font-size:13px;color:#166534;display:flex;align-items:center;gap:7px;margin-bottom:14px}
+.sac{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+/* ERROR */
+.ew{max-width:430px;margin:0 auto;text-align:center;padding:34px 16px}
+.ei{width:66px;height:66px;background:var(--red-l);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
+.ehold{background:var(--amb-l);border:1px solid #FDE68A;border-radius:var(--r-md);padding:10px 13px;font-size:13px;color:var(--amb);display:flex;align-items:center;gap:6px;margin-bottom:16px}
+.eac{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+/* MY TICKETS */
+.ttabs{display:flex;gap:4px;background:var(--bg2);border-radius:var(--r-md);padding:4px;margin-bottom:16px;width:fit-content}
+.tbt{font-size:13px;font-weight:500;padding:7px 13px;border-radius:var(--r-sm);color:var(--gy);transition:var(--tr);border:none;background:none;cursor:pointer;font-family:var(--f)}
+.tbt.act{background:var(--wh);color:var(--dk);box-shadow:var(--sh)}
+.mtc{background:var(--wh);border:1px solid var(--bdr);border-radius:var(--r-lg);padding:14px;margin-bottom:9px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;transition:var(--tr)}
+.mtc:hover{border-color:var(--acc-m);box-shadow:var(--sh)}.mtc.past{opacity:.65}
+.mtc-r{font-family:var(--fh);font-size:13px;font-weight:600;color:var(--dk);margin-bottom:4px}
+.mtc-m{font-size:12px;color:var(--gy);margin-bottom:7px}
+.mtca{display:flex;flex-direction:column;gap:5px;align-items:flex-end}
+.qrm{width:52px;height:52px;background:var(--bg);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;border:1px solid var(--bdr)}
+/* Progress */
+.prog{display:flex;align-items:center;margin-bottom:20px;overflow-x:auto;padding-bottom:2px}
+.ps{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.psn{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.psn.done{background:var(--grn);color:#fff}.psn.active{background:var(--acc);color:#fff}.psn.pend{background:var(--bg2);color:var(--gy)}
+.psl{font-size:12px;font-weight:500}
+.psl.active{color:var(--dk)}.psl.done{color:var(--grn)}.psl.pend{color:var(--gy)}
+.psline{width:26px;height:2px;background:var(--bdr);margin:0 3px;flex-shrink:0}
+.psline.done{background:var(--grn)}
+/* Mobile */
+@media(max-width:768px){
+.sr{grid-template-columns:1fr}.ss{margin:0 auto;transform:rotate(90deg)}
+.rw,.sl,.payl{grid-template-columns:1fr}.fp{display:none}
+.fp.mob{display:block;position:fixed;inset:0;z-index:200;overflow-y:auto;border-radius:0}
+.sumc,.sumc{position:static}.h-t{font-size:20px}
+.hdr-un{display:none}.f2{grid-template-columns:1fr}
+.how-g{grid-template-columns:1fr 1fr}.pop-g{grid-template-columns:repeat(2,1fr)}
+.tc-mn{grid-template-columns:1fr auto 1fr;gap:6px}.seat{width:27px;height:27px;font-size:9px}
+.tqw{flex-direction:column;align-items:center}.tqr{margin:0 auto}.mob-fb{display:flex!important}
+}
+@media(min-width:769px){.mob-fb{display:none!important}}
+</style>
+</head>
+<body>
+<div id="toast"><div class="tic" id="t-ic"></div><span id="t-ms"></span></div>
+<div class="mb" id="mod-to"><div class="modal"><div class="mhd"><div class="mti">⏰ Время вышло</div><button class="mcl" onclick="cm('mod-to')">✕</button></div><div class="mbod">Место было зарезервировано на 10 минут. Время истекло — место освобождено.</div><div class="mft"><button class="btn btn-p" onclick="cm('mod-to');goSeats()">Выбрать место снова</button></div></div></div>
+<div class="mb" id="mod-ret"><div class="modal"><div class="mhd"><div class="mti">Возврат билета</div><button class="mcl" onclick="cm('mod-ret')">✕</button></div><div class="mbod"><div style="background:var(--amb-l);border:1px solid #FDE68A;border-radius:var(--r-md);padding:10px;font-size:13px;color:var(--amb);margin-bottom:10px">⚠️ Заявка обрабатывается 3 рабочих дня.</div>Вы уверены, что хотите вернуть билет <strong id="ret-n"></strong>?</div><div class="mft"><button class="btn btn-s" onclick="cm('mod-ret')">Отмена</button><button class="btn btn-d" onclick="confRet()">Создать заявку</button></div></div></div>
+<div class="pl" id="pay-ld"><div class="pls"></div><div style="font-size:16px;font-weight:600;color:var(--dk)">Обрабатываем оплату</div><div style="font-size:13px;color:var(--gy)">Не закрывайте страницу</div></div>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+<header class="hdr"><div class="hdr-i">
+<div class="logo" onclick="goHome()"><div class="logo-ic"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M2 11V7l8-5 8 5v4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="10" width="10" height="8" rx="1" stroke="#fff" stroke-width="1.6"/></svg></div><span class="logo-tx">Way<span>O</span></span></div>
+<div class="hdr-nav"><button class="hbtn hbtn-g" onclick="goTickets()">Мои билеты</button><div class="hdr-user" onclick="goTickets()"><div class="av" id="hdr-av">АА</div><span class="hdr-un" id="hdr-un">Ахметов А.</span></div></div>
+</div></header>
+<div class="hero"><div class="hero-i">
+<div class="h-gr" id="hgr">👋 Добро пожаловать</div>
+<h1 class="h-t">Автобусные билеты<br>по <span>Казахстану</span></h1>
+<p class="h-s">Быстро, удобно, без очередей — 24/7</p>
+<div class="sc">
+<div class="sr">
+<div class="sf"><label>Откуда</label><div class="siw" style="position:relative"><svg class="s-ic" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3" stroke-dasharray="2 2"/></svg><input class="si" id="if" placeholder="Город отправления" autocomplete="off" oninput="ac(this,'df')" onfocus="ac(this,'df')" onblur="setTimeout(()=>acc('df'),160)"><div class="ac" id="df"></div></div></div>
+<div class="ss" onclick="swapC()"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="transition:var(--tr)"><path d="M5 3l-3 3 3 3M11 13l3-3-3-3" stroke="var(--acc)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 6h12M2 10h12" stroke="var(--acc)" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+<div class="sf"><label>Куда</label><div class="siw" style="position:relative"><svg class="s-ic" viewBox="0 0 16 16" fill="none"><path d="M8 2C5.791 2 4 3.791 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.209-1.791-4-4-4z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="6" r="1.5" fill="currentColor"/></svg><input class="si" id="it" placeholder="Город прибытия" autocomplete="off" oninput="ac(this,'dt')" onfocus="ac(this,'dt')" onblur="setTimeout(()=>acc('dt'),160)"><div class="ac" id="dt"></div></div></div>
+</div>
+<div class="sdr">
+<div class="sf" style="width:100%"><label>Дата</label><input class="si" id="id" type="date" style="padding-left:12px"></div>
+<div class="sf" style="width:100%"><label>Пассажиров</label><select class="si" style="padding-left:12px"><option>1 пассажир</option><option>2 пассажира</option><option>3 пассажира</option></select></div>
+</div>
+<button class="btn btn-p btn-bl btn-lg" onclick="doSearch()" style="font-size:15px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Найти рейсы</button>
+</div>
+<div class="pop-s"><div class="pop-l">Популярные направления</div><div class="pop-g" id="pop-g"></div></div>
+</div></div>
+<div class="up-s"><div class="up-i"><div class="sec-t">Мои ближайшие поездки<button class="btn btn-g" style="font-size:13px" onclick="goTickets()">Все →</button></div><div id="up-l"></div></div></div>
+<div class="how-s"><div class="how-i"><div style="font-family:var(--fh);font-size:18px;font-weight:700;color:var(--dk)">Как купить билет</div><div class="how-g"><div class="how-step"><div class="how-n">1</div><div class="how-t">Укажите маршрут</div><div class="how-d">Откуда и куда, выберите дату</div></div><div class="how-step"><div class="how-n">2</div><div class="how-t">Выберите рейс и место</div><div class="how-d">Сравните рейсы и выберите место на схеме</div></div><div class="how-step"><div class="how-n">3</div><div class="how-t">Оплатите</div><div class="how-d">Через Kaspi Pay или банковской картой</div></div><div class="how-step"><div class="how-n">4</div><div class="how-t">Получите билет</div><div class="how-d">QR-код сразу на экране и на email</div></div></div></div></div>
+<footer class="ftr"><div class="ftr-i"><div class="ftr-logo">Way<span>O</span></div><div class="ftr-links"><a href="#">О сервисе</a><a href="#">Перевозчикам</a><a href="#">Конфиденциальность</a><a href="#">Поддержка</a></div><div style="font-size:12px">© 2025 WayO · wayo.kz</div></div></footer>
+</div>
+
+<!-- RESULTS -->
+<div class="screen" id="screen-results">
+<header class="hdr"><div class="hdr-i">
+<div class="logo" onclick="goHome()"><div class="logo-ic"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M2 11V7l8-5 8 5v4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="10" width="10" height="8" rx="1" stroke="#fff" stroke-width="1.6"/></svg></div><span class="logo-tx">Way<span>O</span></span></div>
+<div style="flex:1;max-width:440px;margin:0 12px"><div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r-md);padding:7px 12px;display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;font-weight:500;color:var(--dk)" onclick="goHome()"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="var(--gy)" stroke-width="1.5"/><path d="M11 11l3 3" stroke="var(--gy)" stroke-width="1.5" stroke-linecap="round"/></svg><span id="rsum"></span></div></div>
+<div class="hdr-nav"><div class="hdr-user" onclick="goTickets()"><div class="av">АА</div><span class="hdr-un">Ахметов А.</span></div></div>
+</div></header>
+<div class="pb"><div class="c">
+<div class="bc" id="rbc"></div>
+<button class="btn btn-s mob-fb" style="margin-bottom:10px;display:none" onclick="document.getElementById('fp').classList.toggle('mob')"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4 8h8M7 12h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Фильтры</button>
+<div class="rw">
+<div class="fp" id="fp">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px"><div style="font-weight:600;font-size:13px;color:var(--dk)">Фильтры</div><button class="btn btn-g" style="font-size:11px;padding:3px 7px;display:none" id="fpcl" onclick="document.getElementById('fp').classList.remove('mob')">✕</button></div>
+<div style="margin-bottom:14px"><div class="fgl">Тип автобуса</div><label class="fck"><input type="checkbox" checked onchange="applyF()"><span>Сидячий</span></label><label class="fck"><input type="checkbox" checked onchange="applyF()"><span>Спальный</span></label><label class="fck"><input type="checkbox" checked onchange="applyF()"><span>Трансформер</span></label></div>
+<div style="margin-bottom:14px"><div class="fgl">Время отправления</div><label class="fck"><input type="checkbox" checked onchange="applyF()"><span>Утро 06–12</span></label><label class="fck"><input type="checkbox" checked onchange="applyF()"><span>День 12–18</span></label><label class="fck"><input type="checkbox" checked onchange="applyF()"><span>Вечер 18–00</span></label></div>
+<div style="margin-bottom:14px"><div class="fgl">Макс. цена</div><input type="range" class="ri" min="1000" max="10000" value="10000" oninput="document.getElementById('prl').textContent='до '+parseInt(this.value).toLocaleString('ru-RU')+' ₸';applyF()"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gy);margin-top:3px"><span>от 1 000 ₸</span><span id="prl">до 10 000 ₸</span></div></div>
+<button class="btn btn-g btn-bl" style="font-size:12px" onclick="resetF()">Сбросить</button>
+</div>
+<div>
+<div class="rhd"><div class="rc" id="rcnt"></div><div class="srw"><button class="sb act" id="sb-time" onclick="sBy('time')">По времени</button><button class="sb" id="sb-price" onclick="sBy('price')">По цене</button><button class="sb" id="sb-seats" onclick="sBy('seats')">По местам</button></div></div>
+<div id="tlist"></div>
+</div>
+</div>
+</div></div>
+<footer class="ftr"><div class="ftr-i"><div class="ftr-logo">Way<span>O</span></div><div style="font-size:12px">© 2025 WayO</div></div></footer>
+</div>
+
+<!-- SEATS -->
+<div class="screen" id="screen-seats">
+<header class="hdr"><div class="hdr-i">
+<div class="logo" onclick="goHome()"><div class="logo-ic"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M2 11V7l8-5 8 5v4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="10" width="10" height="8" rx="1" stroke="#fff" stroke-width="1.6"/></svg></div><span class="logo-tx">Way<span>O</span></span></div>
+<div class="hdr-nav"><button class="hbtn hbtn-g" onclick="goResults()">← Назад</button><div class="hdr-user" onclick="goTickets()"><div class="av">АА</div><span class="hdr-un">Ахметов А.</span></div></div>
+</div></header>
+<div class="pb"><div class="c">
+<div class="prog" id="prog-s"></div>
+<div class="sl">
+<div>
+<div class="pnl"><div class="pnl-t"><span>Выберите место</span><span id="sts" style="font-size:11px;font-weight:400;color:var(--gy)"></span></div>
+<div class="sleg"><div class="sli"><div class="slb" style="background:var(--acc-l);border:1.5px solid var(--acc-m)"></div>Свободно</div><div class="sli"><div class="slb" style="background:#F0FDF4;border:1.5px solid #BBF7D0"></div>У окна (+600₸)</div><div class="sli"><div class="slb" style="background:var(--bg2);border:1.5px solid var(--bdr)"></div>Занято</div><div class="sli"><div class="slb" style="background:var(--acc)"></div>Выбрано</div></div>
+<div class="bwrap"><div style="min-width:185px"><div class="bfr"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 5v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Водитель</div><div class="bgrid" id="sgrid"></div></div></div>
+</div>
+<div class="pnl" style="margin-top:12px">
+<div style="font-size:13px;font-weight:600;color:var(--dk);margin-bottom:10px;display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="var(--acc)" stroke-width="1.3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="var(--acc)" stroke-width="1.3" stroke-linecap="round"/></svg>Данные пассажира</div>
+<div class="ppre"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px"><path d="M2 8l4 4 8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Данные из вашего профиля. Изменения — только для этого билета.</div>
+<div class="f2"><div class="ig"><label class="il">Фамилия<span>*</span></label><input class="inp" id="pl" value="Ахметов" oninput="vf(this,'pl')"><span class="ierr" id="e-pl">Введите фамилию</span></div><div class="ig"><label class="il">Имя<span>*</span></label><input class="inp" id="pf" value="Айдос" oninput="vf(this,'pf')"><span class="ierr" id="e-pf">Введите имя</span></div></div>
+<div class="ig"><label class="il">Отчество</label><input class="inp" id="pm" value="Берикович"></div>
+<div class="f2"><div class="ig"><label class="il">Номер документа<span>*</span></label><input class="inp" id="pd" value="054321890" oninput="vf(this,'pd')"><div class="ihint">Уд. личности или паспорт (без ИИН)</div><span class="ierr" id="e-pd">Введите номер</span></div><div class="ig"><label class="il">Телефон<span>*</span></label><input class="inp" id="pp" value="+7 700 123 45 67" oninput="vf(this,'pp')"><span class="ierr" id="e-pp">Введите телефон</span></div></div>
+<div class="ig"><label class="il">Email<span>*</span></label><input class="inp" id="pe" value="aibet@mail.kz" oninput="vf(this,'pe')"><span class="ierr" id="e-pe">Корректный email</span></div>
+<div class="pcon"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px"><path d="M2 8l4 4 8-8" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Согласие на обработку персданных дано при регистрации на WayO.</div>
+</div>
+</div>
+<div>
+<div class="tbar" id="tbar"><div class="tlbl"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 5v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Место зарезервировано</div><div class="tv" id="tv">10:00</div></div>
+<div class="sumc">
+<div class="st-rip"><div class="s-ro" id="sro"></div><div class="s-me" id="sme"></div><div id="ssew" style="display:none"><span class="s-se" id="sse"></span></div></div>
+<div id="snotice" style="background:var(--bg2);border-radius:var(--r-md);padding:10px;font-size:13px;color:var(--gy);text-align:center;margin-bottom:10px">← Выберите место на схеме</div>
+<div id="spb" style="display:none;flex-direction:column"><div class="pbr"><span class="l" id="pbtp">Билет</span><span class="v" id="pbti"></span></div><div class="pbr"><span class="l">Сервисный сбор</span><span class="v" id="pbco"></span></div><div class="pbdv"></div><div class="pbt"><span>Итого</span><span class="v" id="pbtot"></span></div></div>
+<button class="btn btn-p btn-bl btn-lg" id="btnpay" onclick="goPay()" disabled style="margin-top:10px">Перейти к оплате</button>
+<div style="text-align:center;margin-top:7px;font-size:11px;color:var(--gy)">🔒 Защищённое соединение SSL</div>
+</div>
+</div>
+</div>
+</div></div>
+<footer class="ftr"><div class="ftr-i"><div class="ftr-logo">Way<span>O</span></div><div style="font-size:12px">© 2025 WayO</div></div></footer>
+</div>
+
+<!-- PAYMENT -->
+<div class="screen" id="screen-payment">
+<header class="hdr"><div class="hdr-i">
+<div class="logo" onclick="goHome()"><div class="logo-ic"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M2 11V7l8-5 8 5v4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="10" width="10" height="8" rx="1" stroke="#fff" stroke-width="1.6"/></svg></div><span class="logo-tx">Way<span>O</span></span></div>
+<div class="hdr-nav"><button class="hbtn hbtn-g" onclick="goSeats()">← Назад</button><div class="hdr-user" onclick="goTickets()"><div class="av">АА</div><span class="hdr-un">Ахметов А.</span></div></div>
+</div></header>
+<div class="pb"><div class="c">
+<div class="prog" id="prog-p"></div>
+<div class="payl">
+<div class="payc">
+<h2 style="font-family:var(--fh);font-size:16px;font-weight:600;color:var(--dk);margin-bottom:16px">Выберите способ оплаты</h2>
+<div class="pms">
+<div class="pm sel" id="pm-k" onclick="selPay('k')"><div class="pmhd"><div class="pmr"><div class="pmd"></div></div><div><div class="pm-na">Kaspi Pay</div><div class="pm-de">Через приложение Kaspi</div></div><div class="pm-lo"><div class="pmlo" style="background:#E93535;color:#fff;border-color:#E93535">Kaspi</div></div></div>
+<div class="pmbo"><div class="kqw"><div style="font-size:13px;font-weight:500;color:var(--dk);margin-bottom:12px">Отсканируйте QR-код в приложении Kaspi</div><div class="qbox"><canvas id="kqr" width="140" height="140"></canvas></div><div class="ksp"><div class="ks"></div>Ожидаем оплату...</div><div class="kinstr">1. Откройте Kaspi.kz<br>2. Нажмите «Сканировать»<br>3. Наведите на QR-код</div><button class="btn btn-s" style="margin-top:12px;width:100%;font-size:13px" onclick="simK()">Симулировать успешную оплату</button></div></div></div>
+<div class="pm" id="pm-c" onclick="selPay('c')"><div class="pmhd"><div class="pmr"><div class="pmd"></div></div><div><div class="pm-na">Банковская карта</div><div class="pm-de">Visa, Mastercard · Halyk Bank</div></div><div class="pm-lo"><div class="pmlo" style="color:#1A1F71">VISA</div><div class="pmlo" style="color:#EB001B">MC</div></div></div>
+<div class="pmbo"><div class="ci"><div class="ig" style="margin:0"><label class="il">Номер карты</label><input class="inp" id="cn" placeholder="0000 0000 0000 0000" maxlength="19" oninput="fmtC(this)" style="font-family:monospace;letter-spacing:1px"></div><div class="cr"><div class="ig" style="margin:0"><label class="il">Срок</label><input class="inp" id="ce" placeholder="ММ/ГГ" maxlength="5" oninput="fmtE(this)"></div><div class="ig" style="margin:0"><label class="il">CVV</label><input class="inp" id="cv" placeholder="•••" maxlength="3" type="password"></div></div><div class="ig" style="margin:0"><label class="il">Имя на карте</label><input class="inp" id="cna" placeholder="AIYNUR AKHMETOVA" style="text-transform:uppercase"></div><button class="btn btn-p btn-bl" onclick="doCard()">Оплатить <span id="camt"></span></button><div style="text-align:center;font-size:11px;color:var(--gy);margin-top:4px">🔒 Данные карты — напрямую в Halyk Bank</div><button class="btn btn-g btn-bl" style="font-size:11px;color:var(--red)" onclick="simFail()">Симулировать ошибку оплаты</button></div></div></div>
+</div>
+</div>
+<div>
+<div class="sumc">
+<div style="font-size:11px;font-weight:600;color:var(--gy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px">Ваш заказ</div>
+<div class="st-rip"><div class="s-ro" id="psro"></div><div class="s-me" id="psme"></div><div style="margin-top:5px"><span class="s-se" id="psse"></span></div></div>
+<div style="font-size:12px;font-weight:500;color:var(--dk);margin-bottom:4px">Пассажир</div>
+<div style="font-size:12px;color:var(--gy);margin-bottom:10px" id="pspax"></div>
+<div class="pbr"><span class="l" id="pspbt">Билет</span><span class="v" id="pspri"></span></div>
+<div class="pbr"><span class="l">Сервисный сбор</span><span class="v" id="pscom"></span></div>
+<div class="pbdv"></div><div class="pbt"><span>Итого</span><span class="v" id="pstot"></span></div>
+<div style="margin-top:10px"><div class="tbar" id="ptbar"><div class="tlbl" style="font-size:11px"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 5v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Место зарезерв.</div><div class="tv" id="ptv">—</div></div></div>
+</div>
+</div>
+</div>
+</div></div>
+<footer class="ftr"><div class="ftr-i"><div class="ftr-logo">Way<span>O</span></div><div style="font-size:12px">© 2025 WayO</div></div></footer>
+</div>
+
+<!-- SUCCESS -->
+<div class="screen" id="screen-success">
+<header class="hdr"><div class="hdr-i"><div class="logo" onclick="goHome()"><div class="logo-ic"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M2 11V7l8-5 8 5v4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="10" width="10" height="8" rx="1" stroke="#fff" stroke-width="1.6"/></svg></div><span class="logo-tx">Way<span>O</span></span></div><div class="hdr-nav"><button class="hbtn hbtn-g" onclick="goTickets()">Мои билеты</button><button class="hbtn hbtn-p" onclick="goHome()">Новый поиск</button></div></div></header>
+<div class="pb"><div class="c"><div class="sw-">
+<div class="si-c"><svg width="32" height="32" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="16" fill="#DCFCE7"/><path d="M10 18l5.5 5.5L26 12" stroke="#16A34A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="50" stroke-dashoffset="50" style="animation:ck .4s .2s ease forwards"/></svg></div>
+<h1 class="s-ti">Билет оформлен!</h1>
+<p class="s-su">Оплата прошла успешно. Ваш электронный билет готов.</p>
+<div class="tcard"><div class="thd"><div class="thd-r" id="sucr"></div><div class="thd-m" id="sucm"></div></div>
+<div class="tbody"><div class="tqw"><div class="tqr"><canvas id="sqr" width="112" height="112"></canvas></div><div style="flex:1"><div class="tdr"><div class="tdl">Пассажир</div><div class="tdv" id="sucpax"></div></div><div class="tdr"><div class="tdl">Место</div><div class="tdv" id="sucseat"></div></div><div class="tdr"><div class="tdl">Сумма</div><div class="tdv" id="sucpri"></div></div></div></div><div class="tnum"><span id="sucnum"></span><span style="font-size:10px;color:var(--gy2)">Покажите QR кассиру при посадке</span></div></div></div>
+<div class="en"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="4" width="12" height="9" rx="1.5" stroke="#16A34A" stroke-width="1.2"/><path d="M2 5l6 5 6-5" stroke="#16A34A" stroke-width="1.2"/></svg>Билет отправлен на <strong id="sucem" style="margin-left:3px"></strong></div>
+<div class="sac"><button class="btn btn-p btn-bl btn-lg" onclick="dlPDF()"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3v7M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 13h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Скачать PDF-билет</button><button class="btn btn-s btn-bl" onclick="addCal()"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 2v2M11 2v2M2 7h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Добавить в календарь</button><button class="btn btn-g btn-bl" onclick="goTickets()">Мои билеты</button></div>
+</div></div></div>
+<footer class="ftr"><div class="ftr-i"><div class="ftr-logo">Way<span>O</span></div><div style="font-size:12px">© 2025 WayO</div></div></footer>
+</div>
+
+<!-- ERROR -->
+<div class="screen" id="screen-error">
+<header class="hdr"><div class="hdr-i"><div class="logo" onclick="goHome()"><div class="logo-ic"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M2 11V7l8-5 8 5v4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="10" width="10" height="8" rx="1" stroke="#fff" stroke-width="1.6"/></svg></div><span class="logo-tx">Way<span>O</span></span></div></div></header>
+<div class="pb"><div class="c"><div class="ew">
+<div class="ei"><svg width="32" height="32" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="16" fill="#FEE2E2"/><path d="M12 12l12 12M24 12L12 24" stroke="#DC2626" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+<h1 style="font-family:var(--fh);font-size:20px;font-weight:700;color:var(--dk);margin-bottom:7px">Оплата не прошла</h1>
+<p style="font-size:14px;color:var(--gy);margin-bottom:16px;line-height:1.6" id="errr">Оплата отклонена банком.</p>
+<div class="ehold"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 5v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Место зарезервировано: <strong id="errtm" style="margin-left:4px">—</strong></div>
+<div class="eac"><button class="btn btn-p btn-lg" onclick="goPay()">Попробовать снова</button><button class="btn btn-s btn-lg" onclick="swPay()">Другой способ</button></div>
+<button class="btn btn-g" style="margin-top:11px" onclick="goHome()">На главную</button>
+</div></div></div>
+</div>
+
+<!-- MY TICKETS -->
+<div class="screen" id="screen-tickets">
+<header class="hdr"><div class="hdr-i"><div class="logo" onclick="goHome()"><div class="logo-ic"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M2 11V7l8-5 8 5v4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="10" width="10" height="8" rx="1" stroke="#fff" stroke-width="1.6"/></svg></div><span class="logo-tx">Way<span>O</span></span></div><div class="hdr-nav"><button class="hbtn hbtn-p" onclick="goHome()">+ Купить билет</button></div></div></header>
+<div class="pb"><div class="c">
+<h1 style="font-family:var(--fh);font-size:20px;font-weight:700;color:var(--dk);margin-bottom:16px">Мои билеты</h1>
+<div class="ttabs"><button class="tbt act" id="tb-up" onclick="swTab('up')">Предстоящие</button><button class="tbt" id="tb-pa" onclick="swTab('pa')">Прошедшие</button></div>
+<div id="tlist2"></div>
+</div></div>
+<footer class="ftr"><div class="ftr-i"><div class="ftr-logo">Way<span>O</span></div><div style="font-size:12px">© 2025 WayO</div></div></footer>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+// ── MOCK DATA ─────────────────────────────────────────────
+const USER={fn:"Айдос",ln:"Ахметов",mn:"Берикович",ph:"+7 700 123 45 67",em:"aibet@mail.kz",doc:"054321890"};
+const CITIES=["Астана","Алматы","Павлодар","Костанай","Петропавловск","Кокшетау","Шымкент","Актобе","Қарағанды","Семей","Өскемен","Тараз","Қызылорда","Актау","Уральск","Атырау"];
+const POP=[{f:"Астана",t:"Павлодар",p:"от 4 200 ₸"},{f:"Астана",t:"Кокшетау",p:"от 2 500 ₸"},{f:"Астана",t:"Костанай",p:"от 5 800 ₸"},{f:"Астана",t:"Петропавловск",p:"от 4 800 ₸"},{f:"Астана",t:"Қарағанды",p:"от 3 500 ₸"},{f:"Алматы",t:"Шымкент",p:"от 3 200 ₸"}];
+const TDB={"Астана-Павлодар":[{id:"t1",dep:"08:00",arr:"12:30",dur:"4ч 30м",bus:{pl:"234 AKB 01",tp:"Спальный",s:36},pr:4800,fr:12},{id:"t2",dep:"11:30",arr:"16:00",dur:"4ч 30м",bus:{pl:"797 AKR 01",tp:"Сидячий",s:45},pr:4200,fr:8},{id:"t3",dep:"14:00",arr:"18:30",dur:"4ч 30м",bus:{pl:"388 BKL 01",tp:"Сидячий",s:45},pr:4200,fr:31},{id:"t4",dep:"18:30",arr:"23:00",dur:"4ч 30м",bus:{pl:"124 VNM 01",tp:"Трансформер",s:48},pr:5200,fr:2},{id:"t5",dep:"22:00",arr:"02:30",dur:"4ч 30м",bus:{pl:"501 AKP 01",tp:"Спальный",s:36},pr:5800,fr:0}],"Астана-Кокшетау":[{id:"t6",dep:"09:00",arr:"11:30",dur:"2ч 30м",bus:{pl:"789 KOK 01",tp:"Сидячий",s:45},pr:2500,fr:22},{id:"t7",dep:"13:00",arr:"15:30",dur:"2ч 30м",bus:{pl:"456 KOK 02",tp:"Сидячий",s:45},pr:2500,fr:5},{id:"t8",dep:"18:00",arr:"20:30",dur:"2ч 30м",bus:{pl:"123 KOK 03",tp:"Трансформер",s:48},pr:2800,fr:18}],"Астана-Костанай":[{id:"t9",dep:"07:30",arr:"14:00",dur:"6ч 30м",bus:{pl:"111 KST 01",tp:"Спальный",s:36},pr:5800,fr:14},{id:"t10",dep:"19:00",arr:"01:30",dur:"6ч 30м",bus:{pl:"222 KST 02",tp:"Сидячий",s:45},pr:5800,fr:2}],"Астана-Петропавловск":[{id:"t11",dep:"08:00",arr:"13:30",dur:"5ч 30м",bus:{pl:"333 PET 01",tp:"Сидячий",s:45},pr:4800,fr:20},{id:"t12",dep:"15:00",arr:"20:30",dur:"5ч 30м",bus:{pl:"444 PET 02",tp:"Трансформер",s:48},pr:5200,fr:8}],"Алматы-Шымкент":[{id:"t13",dep:"07:00",arr:"12:00",dur:"5ч 00м",bus:{pl:"ALM 001",tp:"Спальный",s:36},pr:3200,fr:15},{id:"t14",dep:"14:00",arr:"19:00",dur:"5ч 00м",bus:{pl:"ALM 002",tp:"Сидячий",s:45},pr:2900,fr:30}],"default":[{id:"td1",dep:"09:30",arr:"13:30",dur:"4ч 00м",bus:{pl:"999 DEF 01",tp:"Сидячий",s:45},pr:3500,fr:25},{id:"td2",dep:"15:00",arr:"19:00",dur:"4ч 00м",bus:{pl:"888 DEF 02",tp:"Спальный",s:36},pr:4500,fr:10},{id:"td3",dep:"20:00",arr:"00:00",dur:"4ч 00м",bus:{pl:"777 DEF 03",tp:"Трансформер",s:48},pr:4000,fr:0}]};
+const MYT=[{id:"WO-2025-28471",ro:"Астана → Павлодар",da:"15.05.2025",ti:"14:00",se:12,bu:"797 AKR 01",st:"upcoming",pr:"4 500 ₸"},{id:"WO-2025-31892",ro:"Астана → Кокшетау",da:"22.05.2025",ti:"09:00",se:7,bu:"789 KOK 01",st:"upcoming",pr:"2 700 ₸"},{id:"WO-2025-19234",ro:"Астана → Костанай",da:"28.04.2025",ti:"07:30",se:21,bu:"111 KST 01",st:"past",pr:"6 100 ₸"},{id:"WO-2025-15678",ro:"Алматы → Шымкент",da:"10.04.2025",ti:"08:00",se:4,bu:"567 ALM 01",st:"past",pr:"3 450 ₸"}];
+const TAKEN=[1,4,8,9,13,16,17,20,21,24,25,28,32,33,36,37,40,41];
+function gc(p){const r=[[1000,2000,150],[2001,3000,200],[3001,4000,250],[4001,5000,300],[5001,6000,350],[6001,7000,400],[7001,8000,450],[8001,9000,500],[9001,10000,550]];for(const[lo,hi,c]of r)if(p>=lo&&p<=hi)return c;return 300;}
+function fm(n){return n.toLocaleString("ru-RU")+" ₸";}
+
+// ── STATE ─────────────────────────────────────────────────
+const S={from:"",to:"",date:"",trip:null,seat:null,win:false,tsec:600,tint:null,pm:"k",tnum:"",sm:"time",tab:"up",rid:""};
+
+// ── ROUTER ────────────────────────────────────────────────
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById("screen-"+id).classList.add("active");window.scrollTo(0,0);}
+function goHome(){show("home");initH();}
+function goResults(){show("results");renderR();}
+function goSeats(){show("seats");renderS();}
+function goPay(){show("payment");renderP();}
+function goSuccess(){show("success");renderSuc();}
+function goErr(r){document.getElementById("errr").textContent=r||"Оплата отклонена банком.";show("error");}
+function goTickets(){show("tickets");renderT();}
+
+// ── HOME ──────────────────────────────────────────────────
+function initH(){
+  document.getElementById("hdr-av").textContent=USER.ln[0]+USER.fn[0];
+  document.getElementById("hdr-un").textContent=USER.ln+" "+USER.fn[0]+".";
+  const h=new Date().getHours();
+  const gr=h<12?"Доброе утро":h<18?"Добрый день":"Добрый вечер";
+  const gel=document.getElementById("hgr");if(gel)gel.textContent="👋 "+gr+", "+USER.fn;
+  const di=document.getElementById("id");if(di){const d=new Date();const ds=d.toISOString().split("T")[0];di.value=S.date||ds;di.min=ds;}
+  if(S.from)document.getElementById("if").value=S.from;
+  if(S.to)document.getElementById("it").value=S.to;
+  const pg=document.getElementById("pop-g");
+  if(pg)pg.innerHTML=POP.map(p=>`<div class="pop-c" onclick="fillS('${p.f}','${p.t}')"><div class="pop-r">${p.f} → ${p.t}</div><div class="pop-p">${p.p}</div></div>`).join("");
+  const ul=document.getElementById("up-l");
+  if(ul){
+    const ups=MYT.filter(t=>t.st==="upcoming");
+    if(!ups.length)ul.innerHTML=`<div style="text-align:center;padding:28px;color:var(--gy);font-size:14px">Предстоящих поездок нет<br><button class="btn btn-p" style="margin-top:10px" onclick="document.getElementById('if').focus()">Купить билет</button></div>`;
+    else ul.innerHTML=`<div class="up-g">${ups.map(t=>`<div class="up-c" onclick="goTickets()"><div class="up-r">${t.ro}</div><div class="up-m">📅 ${t.da} · 🕐 ${t.ti}</div><span class="up-seat">Место ${t.se}</span></div>`).join("")}</div>`;
+  }
+}
+function fillS(f,t){document.getElementById("if").value=f;document.getElementById("it").value=t;S.from=f;S.to=t;}
+function swapC(){const f=document.getElementById("if"),t=document.getElementById("it");const tmp=f.value;f.value=t.value;t.value=tmp;}
+function doSearch(){
+  const f=document.getElementById("if").value.trim(),t=document.getElementById("it").value.trim(),d=document.getElementById("id").value;
+  if(!f||!t){toast("Укажите города","warn");return;}
+  if(f===t){toast("Города совпадают","warn");return;}
+  if(!d){toast("Выберите дату","warn");return;}
+  S.from=f;S.to=t;S.date=d;goResults();
+}
+
+// ── AUTOCOMPLETE ──────────────────────────────────────────
+function ac(inp,did){
+  const q=inp.value.trim().toLowerCase(),dr=document.getElementById(did);
+  if(q.length<1){dr.classList.remove("open");dr.innerHTML="";return;}
+  const m=CITIES.filter(c=>c.toLowerCase().startsWith(q)||c.toLowerCase().includes(q)).slice(0,6);
+  if(!m.length){dr.classList.remove("open");return;}
+  dr.innerHTML=m.map(c=>`<div class="aci" onmousedown="asel('${c}','${inp.id}','${did}')"><svg viewBox="0 0 16 16" fill="none" style="width:10px;height:10px"><path d="M8 2C5.791 2 4 3.791 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.209-1.791-4-4-4z" stroke="currentColor" stroke-width="1.3"/></svg>${c}</div>`).join("");
+  dr.classList.add("open");
+}
+function asel(city,ii,did){document.getElementById(ii).value=city;document.getElementById(did).classList.remove("open");}
+function acc(id){const d=document.getElementById(id);if(d)d.classList.remove("open");}
+
+// ── RESULTS ───────────────────────────────────────────────
+function getT(){const k=`${S.from}-${S.to}`;const raw=TDB[k]||TDB.default;return raw.map(t=>({...t,from:S.from,to:S.to}));}
+function renderR(){
+  const df=S.date?new Date(S.date).toLocaleDateString("ru-RU",{day:"numeric",month:"long"}):"";
+  const rs=document.getElementById("rsum");if(rs)rs.textContent=`${S.from} → ${S.to} · ${df}`;
+  const bc=document.getElementById("rbc");
+  if(bc)bc.innerHTML=`<a onclick="goHome()">Главная</a><svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><a onclick="goHome()">${S.from}</a><svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><span>${S.to} · ${df}</span>`;
+  applyF();
+}
+function applyF(){
+  let trips=getT();
+  const pm=parseInt(document.querySelector(".ri")?.value||10000);
+  trips=trips.filter(t=>t.pr<=pm);
+  sortT(trips);
+}
+function sortT(trips){
+  const m=S.sm;
+  if(m==="price")trips=[...trips].sort((a,b)=>a.pr-b.pr);
+  else if(m==="seats")trips=[...trips].sort((a,b)=>b.fr-a.fr);
+  else trips=[...trips].sort((a,b)=>a.dep.localeCompare(b.dep));
+  renderTL(trips);
+}
+function sBy(m){S.sm=m;document.querySelectorAll(".sb").forEach(b=>b.classList.remove("act"));document.getElementById("sb-"+m).classList.add("act");applyF();}
+function resetF(){document.querySelectorAll(".fck input").forEach(i=>i.checked=true);const r=document.querySelector(".ri");if(r){r.value=10000;document.getElementById("prl").textContent="до 10 000 ₸";}applyF();}
+function renderTL(trips){
+  const cnt=document.getElementById("rcnt");if(cnt)cnt.innerHTML=`Найдено <strong>${trips.length}</strong> рейс${trips.length===1?"":"ов"}`;
+  const list=document.getElementById("tlist");if(!list)return;
+  if(!trips.length){list.innerHTML=`<div class="empty"><div class="e-ic"><svg width="34" height="34" viewBox="0 0 40 40" fill="none"><rect x="4" y="12" width="32" height="20" rx="4" stroke="var(--gy2)" stroke-width="1.5"/><circle cx="12" cy="32" r="3" stroke="var(--gy2)" stroke-width="1.5"/><circle cx="28" cy="32" r="3" stroke="var(--gy2)" stroke-width="1.5"/><path d="M4 20h32" stroke="var(--gy2)" stroke-width="1.5"/></svg></div><div class="e-t">Рейсов не найдено</div><div class="e-s">Попробуйте другую дату</div><div style="display:flex;gap:7px;justify-content:center"><button class="btn btn-s" onclick="chD(-1)">← Вчера</button><button class="btn btn-s" onclick="chD(1)">Завтра →</button></div></div>`;return;}
+  list.innerHTML=trips.map(t=>{
+    const sold=t.bus.s-t.fr,pct=Math.round(sold/t.bus.s*100),noS=t.fr===0,low=t.fr>0&&t.fr<=3;
+    const comm=gc(t.pr),bc=pct>80?"var(--red)":pct>50?"var(--amb)":"var(--acc)";
+    const sh=noS?`<span class="bdg b-gr">Нет мест</span>`:low?`<span class="bdg b-rd">⚡ ${t.fr} места</span>`:`<span style="font-size:12px;font-weight:600;color:var(--grn)">${t.fr} мест</span>`;
+    return `<div class="tc${noS?" dis":""}" onclick="${noS?"":"selT('"+t.id+"')"}">
+<div class="tc-mn"><div><div class="tc-ti">${t.dep}</div><div class="tc-st">${t.from}</div></div><div class="tc-md"><div class="tc-dur">${t.dur}</div><div class="tc-ln"><div class="tc-dot"></div><div class="tc-dash"></div><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="var(--acc)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div><div><div class="tc-ti">${t.arr}</div><div class="tc-st">${t.to}</div></div><div class="tc-ac"><div class="tc-pr">${fm(t.pr)}</div><div class="tc-sub">+${comm} ₸ сбор</div>${!noS?`<button class="btn btn-p" style="font-size:12px;padding:7px 14px" onclick="event.stopPropagation();selT('${t.id}')">Выбрать →</button>`:""}</div></div>
+<div class="tc-mt"><span class="tc-tp">${t.bus.tp}</span><span style="font-size:11px;color:var(--gy);font-family:monospace">${t.bus.pl}</span>${sh}<div style="margin-left:auto;display:flex;align-items:center;gap:4px"><div style="width:66px;height:3px;background:var(--bg2);border-radius:2px;overflow:hidden"><div style="width:${pct}%;height:3px;background:${bc};border-radius:2px"></div></div><span style="font-size:10px;color:var(--gy)">${sold}/${t.bus.s}</span></div></div></div>`;
+  }).join("");
+}
+function selT(id){S.trip=getT().find(t=>t.id===id);S.seat=null;S.win=false;startTm();goSeats();}
+function chD(d){const dt=new Date(S.date||new Date());dt.setDate(dt.getDate()+d);S.date=dt.toISOString().split("T")[0];document.getElementById("id").value=S.date;renderR();}
+
+// ── TIMER ─────────────────────────────────────────────────
+function startTm(){if(S.tint)clearInterval(S.tint);S.tsec=600;S.tint=setInterval(tickT,1000);updT();}
+function tickT(){S.tsec--;if(S.tsec<=0){clearInterval(S.tint);om("mod-to");return;}updT();}
+function updT(){
+  const m=Math.floor(S.tsec/60),s=S.tsec%60,str=`${m}:${s.toString().padStart(2,"0")}`,warn=S.tsec<=120;
+  ["tv","ptv","errtm"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=str;});
+  ["tbar","ptbar"].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle("warn",warn);});
+}
+
+// ── SEATS ─────────────────────────────────────────────────
+function renderS(){
+  const t=S.trip;if(!t)return;
+  const df=S.date?new Date(S.date).toLocaleDateString("ru-RU",{day:"numeric",month:"long"}):"";
+  document.getElementById("sts").textContent=`${t.from} → ${t.to} · ${t.dep}`;
+  document.getElementById("sro").textContent=`${t.from} → ${t.to}`;
+  document.getElementById("sme").textContent=`${df} · ${t.dep}–${t.arr} · ${t.bus.pl}`;
+  rProg("prog-s",2);buildSG();updSS();
+}
+function buildSG(){
+  const t=S.trip;if(!t)return;
+  const rows=Math.ceil(t.bus.s/4),grid=document.getElementById("sgrid");if(!grid)return;
+  let h="";
+  for(let r=0;r<rows;r++){
+    h+=`<div class="brow"><div class="brn">${r+1}</div>`;
+    for(let c=0;c<4;c++){
+      if(c===2)h+=`<div class="aisle"></div>`;
+      const n=r*4+c+1;
+      if(n>t.bus.s){h+=`<div class="seat" style="opacity:0;pointer-events:none"></div>`;continue;}
+      const tk=TAKEN.includes(n),sl=S.seat===n,win=c===0||c===3;
+      let cl=tk?"st":sl?"ssel":win?"sw":"sf";
+      h+=`<div class="seat ${cl}" onclick="${tk?"":"pk("+n+","+(win?1:0)+")"}">${n}</div>`;
+    }
+    h+=`</div>`;
+  }
+  grid.innerHTML=h;
+}
+function pk(n,win){S.seat=n;S.win=!!win;buildSG();updSS();toast(`Место ${n}${win?" (у окна)":""} выбрано`,"success");}
+function updSS(){
+  const t=S.trip;if(!t)return;
+  const ns=!S.seat;
+  document.getElementById("snotice").style.display=ns?"block":"none";
+  const pb=document.getElementById("spb");pb.style.display=ns?"none":"flex";pb.style.flexDirection="column";
+  document.getElementById("ssew").style.display=ns?"none":"block";
+  document.getElementById("btnpay").disabled=ns;
+  if(!ns){
+    const pr=t.pr+(S.win?600:0),co=gc(pr),tot=pr+co;
+    S._pr=pr;S._co=co;S._tot=tot;
+    document.getElementById("sse").innerHTML=`Место ${S.seat}${S.win?" · у окна":""}`;
+    document.getElementById("pbtp").textContent=`Билет${S.win?" (у окна)":""}`;
+    document.getElementById("pbti").textContent=fm(pr);
+    document.getElementById("pbco").textContent=fm(co);
+    document.getElementById("pbtot").textContent=fm(tot);
+  }
+}
+
+// ── FORM VALIDATION ───────────────────────────────────────
+function vf(inp,f){const v=inp.value.trim();const e=document.getElementById("e-"+f);let ok=f==="pe"?/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v):f==="pp"?v.length>=10:v.length>=2;inp.classList.toggle("err",!ok&&v.length>0);if(e)e.classList.toggle("show",!ok&&v.length>0);return ok;}
+
+// ── PAYMENT ───────────────────────────────────────────────
+function renderP(){
+  const t=S.trip;if(!t)return;
+  const df=S.date?new Date(S.date).toLocaleDateString("ru-RU",{day:"numeric",month:"long"}):"";
+  document.getElementById("psro").textContent=`${t.from} → ${t.to}`;
+  document.getElementById("psme").textContent=`${df} · ${t.dep}–${t.arr}`;
+  document.getElementById("psse").textContent=`Место ${S.seat}${S.win?" · у окна":""}`;
+  document.getElementById("pspax").textContent=`${USER.ln} ${USER.fn} ${USER.mn}`;
+  document.getElementById("pspbt").textContent=`Билет${S.win?" (у окна)":""}`;
+  document.getElementById("pspri").textContent=fm(S._pr);
+  document.getElementById("pscom").textContent=fm(S._co);
+  document.getElementById("pstot").textContent=fm(S._tot);
+  document.getElementById("camt").textContent=fm(S._tot);
+  rProg("prog-p",3);genQR();
+}
+function selPay(m){S.pm=m;document.querySelectorAll(".pm").forEach(p=>p.classList.remove("sel"));document.getElementById("pm-"+m).classList.add("sel");}
+function genQR(){
+  const c=document.getElementById("kqr");if(!c)return;
+  try{QRCode.toCanvas(c,`KASPI:${S._tot}:WO-DEMO`,{width:140,margin:1,color:{dark:"#0F172A",light:"#FFFFFF"}});}
+  catch(e){const ctx=c.getContext("2d");ctx.fillStyle="#F1F5F9";ctx.fillRect(0,0,140,140);}
+}
+function simK(){shl();setTimeout(()=>{hhl();payOK();},2500);}
+function doCard(){const n=document.getElementById("cn").value.replace(/\s/g,""),e=document.getElementById("ce").value,v=document.getElementById("cv").value;if(n.length<16||!e||v.length<3){toast("Заполните все поля карты","warn");return;}shl();setTimeout(()=>{hhl();payOK();},2500);}
+function simFail(){shl();setTimeout(()=>{hhl();goErr("Недостаточно средств на карте. Пополните баланс или попробуйте другую карту.");},2000);}
+function payOK(){S.tnum="WO-2025-"+Math.floor(10000+Math.random()*90000);goSuccess();}
+function shl(){document.getElementById("pay-ld").classList.add("show");}
+function hhl(){document.getElementById("pay-ld").classList.remove("show");}
+function swPay(){goPay();setTimeout(()=>selPay(S.pm==="k"?"c":"k"),100);}
+function fmtC(inp){let v=inp.value.replace(/\D/g,"");v=v.match(/.{1,4}/g)?.join(" ")||v;inp.value=v.slice(0,19);}
+function fmtE(inp){let v=inp.value.replace(/\D/g,"");if(v.length>=2)v=v.slice(0,2)+"/"+v.slice(2);inp.value=v.slice(0,5);}
+
+// ── SUCCESS ───────────────────────────────────────────────
+function renderSuc(){
+  if(S.tint)clearInterval(S.tint);
+  const t=S.trip;if(!t)return;
+  const df=S.date?new Date(S.date).toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"}):"";
+  document.getElementById("sucr").textContent=`${t.from} → ${t.to}`;
+  document.getElementById("sucm").textContent=`${df} · ${t.dep} – ${t.arr}`;
+  document.getElementById("sucpax").textContent=`${USER.ln} ${USER.fn} ${USER.mn}`;
+  document.getElementById("sucseat").textContent=`${S.seat}${S.win?" (у окна)":""}`;
+  document.getElementById("sucpri").textContent=fm(S._tot);
+  document.getElementById("sucnum").textContent=`Билет № ${S.tnum}`;
+  document.getElementById("sucem").textContent=USER.em;
+  const c=document.getElementById("sqr");
+  if(c){try{QRCode.toCanvas(c,S.tnum,{width:112,margin:1,color:{dark:"#0F172A",light:"#FFFFFF"}});}catch(e){}}
+  if(!MYT.find(x=>x.id===S.tnum)){MYT.unshift({id:S.tnum,ro:`${t.from} → ${t.to}`,da:S.date?new Date(S.date).toLocaleDateString("ru-RU"):"",ti:t.dep,se:S.seat,bu:t.bus.pl,st:"upcoming",pr:fm(S._tot)});}
+}
+function dlPDF(){toast("PDF-билет скачан","success");}
+function addCal(){toast("Событие добавлено в календарь","success");}
+
+// ── MY TICKETS ────────────────────────────────────────────
+function renderT(){swTab(S.tab);}
+function swTab(tab){
+  S.tab=tab;
+  document.querySelectorAll(".tbt").forEach(b=>b.classList.remove("act"));
+  document.getElementById("tb-"+tab).classList.add("act");
+  const list=document.getElementById("tlist2");
+  const tickets=MYT.filter(t=>t.st===(tab==="up"?"upcoming":"past"));
+  if(!tickets.length){list.innerHTML=`<div style="text-align:center;padding:44px 20px;color:var(--gy)"><div style="font-size:36px;margin-bottom:10px">${tab==="up"?"🎫":"📋"}</div><div style="font-size:15px;font-weight:600;color:var(--dk);margin-bottom:7px">${tab==="up"?"Нет предстоящих поездок":"История пуста"}</div>${tab==="up"?'<button class="btn btn-p" onclick="goHome()">Купить билет</button>':""}</div>`;return;}
+  list.innerHTML=tickets.map(t=>`<div class="mtc ${t.st==="past"?"past":""}"><div><div class="mtc-r">${t.ro}</div><div class="mtc-m">📅 ${t.da} · 🕐 ${t.ti} · Место ${t.se} · ${t.bu}</div><div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center"><span class="bdg ${t.st==="upcoming"?"b-bl":"b-gr"}">${t.st==="upcoming"?"Предстоит":"Завершено"}</span><span class="bdg b-gn">${t.pr}</span><span style="font-size:11px;color:var(--gy)">№ ${t.id}</span></div></div><div class="mtca"><div class="qrm"><canvas id="mq${t.id.replace(/-/g,"")}" width="48" height="48"></canvas></div><button class="btn btn-s" style="font-size:11px;padding:4px 8px" onclick="toast('PDF скачан','success')">PDF</button>${t.st==="upcoming"?`<button class="btn btn-d" style="font-size:11px;padding:4px 8px" onclick="opR('${t.id}')">Возврат</button>`:""}</div></div>`).join("");
+  tickets.forEach(t=>{const cid="mq"+t.id.replace(/-/g,"");const c=document.getElementById(cid);if(c){try{QRCode.toCanvas(c,t.id,{width:48,margin:0,color:{dark:"#0F172A",light:"#FFFFFF"}});}catch(e){}}});
+}
+function opR(id){S.rid=id;document.getElementById("ret-n").textContent=id;om("mod-ret");}
+function confRet(){cm("mod-ret");toast(`Заявка на возврат ${S.rid} создана. 3 рабочих дня.`,"success");}
+
+// ── PROGRESS ──────────────────────────────────────────────
+function rProg(id,cur){
+  const el=document.getElementById(id);if(!el)return;
+  const steps=[{n:1,l:"Рейс"},{n:2,l:"Место"},{n:3,l:"Оплата"},{n:4,l:"Билет"}];
+  el.innerHTML=steps.map((s,i)=>{const st=s.n<cur?"done":s.n===cur?"active":"pend";return `${i>0?`<div class="psline ${s.n<=cur?"done":""}"></div>`:""}
+<div class="ps"><div class="psn ${st}">${st==="done"?"✓":s.n}</div><div class="psl ${st}">${s.l}</div></div>`;}).join("");
+}
+
+// ── MODAL ─────────────────────────────────────────────────
+function om(id){document.getElementById(id).classList.add("open");}
+function cm(id){document.getElementById(id).classList.remove("open");}
+document.addEventListener("click",e=>{if(e.target.classList.contains("mb"))e.target.classList.remove("open");});
+
+// ── TOAST ─────────────────────────────────────────────────
+let _tt;
+function toast(msg,type=""){
+  const t=document.getElementById("toast"),ic=document.getElementById("t-ic"),m=document.getElementById("t-ms");
+  t.className=type?"t"+type[0]:"";m.textContent=msg;
+  const icons={s:"✓",e:"✗",w:"!"};ic.textContent=icons[type[0]]||"";ic.style.display=type?"flex":"none";
+  t.classList.add("show");clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove("show"),3000);
+}
+
+// ── INIT ──────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded",()=>{S.date=new Date().toISOString().split("T")[0];initH();});
+</script></body></html>
